@@ -92,11 +92,11 @@ export class GameObject {
     if (!this.canLeaveMap) {
       if (this.pos.x - this.halfSize.width < 0) {
         this.pos.x = this.halfSize.width
-        if (this.vel.x < 0) this.vel.x = -this.vel.x
+        if (this.vel.x < 0) this.vel.x = -this.vel.x * 0.5
       }
       if (this.pos.x + this.halfSize.width > constants.screenWidth) {
         this.pos.x = constants.screenWidth - this.halfSize.width
-        if (this.vel.x > 0) this.vel.x = -this.vel.x
+        if (this.vel.x > 0) this.vel.x = -this.vel.x * 0.5
       }
     }
   }
@@ -113,11 +113,8 @@ export class GameObject {
   }
 
   handleCollision(object: GameObject) {
-    if (this.isStatic || !this.isCollidable) return
-    if (!object.isCollidable) return
-    if (this.isJumping && object.type === GameObjectType.Platform) {
-      this.isJumping = false
-    }
+    if (this.isStatic || !this.isCollidable || !object.isCollidable) return
+
     if (object.type === GameObjectType.Platform) {
       this.handlePlatformCollision(object)
     }
