@@ -23,25 +23,8 @@ export class Game {
       this.player,
       new Player(),
       new Platform({
-        size: { width: 200, height: 20 },
-        pos: {
-          x: 100,
-          y: constants.screenHeight - 120,
-        },
-        behaviours: [PlatformBehaviour.MovesY],
-      }),
-      new Platform({
-        size: { width: 200, height: 20 },
-        pos: {
-          x: 500,
-          y: constants.screenHeight - 200,
-        },
-        behaviours: [PlatformBehaviour.MovesY],
-      }),
-
-      new Platform({
-        size: { width: 200, height: 20 },
-        pos: { x: 200, y: constants.screenHeight - 260 },
+        size: { width: 250, height: 20 },
+        pos: { x: 200, y: constants.screenHeight - 120 },
         behaviours: [PlatformBehaviour.Bounce, PlatformBehaviour.MovesX],
       }),
     ]

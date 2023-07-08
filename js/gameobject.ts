@@ -34,22 +34,20 @@ export class GameObject {
     }
 
     ctx.fillStyle = this.color
+    ctx.beginPath()
 
     if (this.shape === Shape.Circle) {
-      ctx.beginPath()
       ctx.arc(this.pos.x, this.pos.y - yOffset, this.halfSize.width, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.closePath()
-      return
+    } else {
+      ctx.roundRect(
+        this.pos.x - this.size.width / 2,
+        this.pos.y - this.size.height / 2 - yOffset,
+        this.size.width,
+        this.size.height,
+        2
+      )
     }
-    ctx.beginPath()
-    ctx.roundRect(
-      this.pos.x - this.size.width / 2,
-      this.pos.y - this.size.height / 2 - yOffset,
-      this.size.width,
-      this.size.height,
-      2
-    )
+
     ctx.fill()
     ctx.closePath()
   }
