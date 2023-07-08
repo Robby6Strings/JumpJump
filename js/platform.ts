@@ -16,7 +16,7 @@ export enum PlatformBehaviour {
 
 export class Platform extends GameObject {
   behaviours: PlatformBehaviour[] = []
-  moveSpeed = 3
+  moveSpeed = Math.random() * 2 + 1
   moveDirectionX = 1
   moveDirectionY = 1
   moveDistanceX = 200
