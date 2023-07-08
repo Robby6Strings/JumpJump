@@ -69,13 +69,20 @@ export class Game {
   }
 
   generateNextSection() {
-    console.log("Generating section", this.sectionIndex)
     const platforms = []
-    for (let i = 0; i < 3; i++) {
+    const platformCount = 3
+    const areaWidth = constants.screenWidth / platformCount
+    for (let i = 0; i < platformCount; i++) {
+      const heightVariance = 100
+
       platforms.push(
         Platform.randomPlatform({
-          x: Math.random() * constants.screenWidth,
-          y: constants.screenHeight - this.sectionIndex * constants.screenHeight,
+          x: Math.random() * (i + 1) * areaWidth,
+          y:
+            constants.screenHeight -
+            this.sectionIndex * constants.screenHeight +
+            Math.random() * heightVariance -
+            heightVariance / 2,
         })
       )
     }
