@@ -28,7 +28,7 @@ export class Platform extends GameObject {
     this.type = GameObjectType.Platform
     this.pos = pos
     this.size = size
-    this.color = "green"
+    this.color = "#bbb"
     this.isStatic = true
     this.canLeaveMap = true
     if (behaviours) {

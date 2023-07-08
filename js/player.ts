@@ -13,7 +13,7 @@ export class Player extends GameObject {
     this.pos.y = constants.screenHeight - this.halfSize.height
     this.isStatic = false
     this.affectedByGravity = true
-    this.color = "#ccca"
+    this.color = "#69c"
   }
 
   tick(): void {
