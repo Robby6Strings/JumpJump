@@ -42,13 +42,16 @@ export class GameObject {
       ctx.closePath()
       return
     }
-
-    ctx.fillRect(
+    ctx.beginPath()
+    ctx.roundRect(
       this.pos.x - this.size.width / 2,
       this.pos.y - this.size.height / 2 - yOffset,
       this.size.width,
-      this.size.height
+      this.size.height,
+      2
     )
+    ctx.fill()
+    ctx.closePath()
   }
 
   tick() {
