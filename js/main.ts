@@ -23,7 +23,7 @@ function loop() {
     object.draw(ctx, game.camera.offsetY)
   }
 
-  game.camera.draw(ctx)
+  //game.camera.draw(ctx)
 
   // render score
   ctx.fillStyle = "white"

@@ -16,10 +16,6 @@ export class Player extends GameObject {
     this.color = "#ccca"
   }
 
-  get distanceFromGround(): number {
-    return constants.screenHeight - this.pos.y - this.halfSize.height
-  }
-
   tick(): void {
     this.handleInputs()
     super.tick()
