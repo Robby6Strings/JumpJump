@@ -39,7 +39,7 @@ export class Platform extends GameObject {
   static randomPlatform(pos: Vec2): Platform {
     const size = {
       width: Math.random() * 100 + 50,
-      height: Math.random() * 20 + 10,
+      height: Math.random() * 10 + 20,
     }
     const behaviours = [PlatformBehaviour.Bounce]
     if (Math.random() > 0.5) {
