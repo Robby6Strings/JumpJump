@@ -7,8 +7,8 @@ export class GameObject {
   type: GameObjectType = GameObjectType.Unset
   pos: Vec2 = { x: 0, y: 0 }
   vel: Vec2 = { x: 0, y: 0 }
-  speed: number = 5
-  maxSpeed: number = 15
+  speed: number = 3
+  maxSpeed: number = 12
   jumpPower: number = 15
   isJumping: boolean = false
 
@@ -124,7 +124,7 @@ export class GameObject {
       this.vel.y = 0
       this.isJumping = false
       if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
-        this.vel.y = -this.jumpPower
+        this.vel.y = -(this.jumpPower / 1.5)
       }
     } else if (this.pos.y > platform.pos.y) {
       this.pos.y = platform.pos.y + platform.halfSize.height + this.halfSize.height

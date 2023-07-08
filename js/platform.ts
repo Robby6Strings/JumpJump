@@ -23,7 +23,7 @@ export class Platform extends GameObject {
   moveDistanceY = 100
   moveDistanceTravelledX = 0
   moveDistanceTravelledY = 0
-  constructor({ pos, size, behaviours }: PlatformConstructor) {
+  constructor({ pos, size, behaviours = [] }: PlatformConstructor) {
     super()
     this.type = GameObjectType.Platform
     this.pos = pos
@@ -31,9 +31,7 @@ export class Platform extends GameObject {
     this.color = "#bbb"
     this.isStatic = true
     this.canLeaveMap = true
-    if (behaviours) {
-      this.behaviours = behaviours
-    }
+    this.behaviours = behaviours
   }
 
   static randomPlatform(pos: Vec2): Platform {

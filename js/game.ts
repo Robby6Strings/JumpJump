@@ -29,7 +29,8 @@ export class Game {
       }),
     ]
     this.camera = new Camera(this.player)
-    this.sectionIndex = 0
+    this.sectionIndex = 1
+    this.generateNextSection()
   }
 
   set section(index: number) {
@@ -39,22 +40,23 @@ export class Game {
   }
 
   tick() {
+    this.handleCollisions()
     for (const object of this.objects) {
       object.tick()
     }
-    this.handleCollisions()
     this.camera.tick()
     this.score = 0
     this.score = Math.floor(
       Math.abs(this.player.pos.y - constants.screenHeight + this.player.halfSize.height) / 50
     )
-    this.section = Math.abs(Math.floor(this.player.pos.y / constants.screenHeight)) + 1
+    this.section = Math.abs(Math.floor(this.player.pos.y / constants.sectionHeight)) + 1
   }
 
   generateNextSection() {
     const platforms = []
     const platformCount = 3
     const areaWidth = constants.screenWidth / platformCount
+
     for (let i = 0; i < platformCount; i++) {
       const heightVariance = 100
 
@@ -62,8 +64,8 @@ export class Game {
         Platform.randomPlatform({
           x: Math.random() * (i + 1) * areaWidth,
           y:
-            constants.screenHeight -
-            this.sectionIndex * constants.screenHeight +
+            constants.sectionHeight -
+            this.sectionIndex * constants.sectionHeight +
             Math.random() * heightVariance -
             heightVariance / 2,
         })

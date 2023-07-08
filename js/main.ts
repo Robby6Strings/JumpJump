@@ -36,6 +36,12 @@ let bgPattern: CanvasPattern | null = null
 function main() {
   bgPattern = bgCtx.createPattern(images[0].image, "repeat")!
   bgCtx.fillStyle = bgPattern
+  bgCtx.fillRect(
+    0,
+    -constants.screenHeight * 999,
+    constants.screenWidth,
+    constants.screenHeight * 1000
+  )
 
   loop()
 }
@@ -54,15 +60,23 @@ function loop() {
     object.draw(ctx, game.camera.offsetY)
   }
 
-  bgCtx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
-  bgCtx.resetTransform()
-  bgCtx.translate(0, -game.camera.offsetY * images[0].speed + game.player.vel.y * -images[0].speed)
-  bgCtx.fillRect(
-    0,
-    -constants.screenHeight * 999,
-    constants.screenWidth,
-    constants.screenHeight * 1000
-  )
+  const yTranslate =
+    Math.abs(game.player.vel.y) <= 0
+      ? 0
+      : -game.camera.offsetY * images[0].speed + game.player.vel.y * -images[0].speed
+  if (yTranslate > 0) {
+    bgCtx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
+    //bgCtx.resetTransform()
+
+    bgCtx.translate(0, yTranslate)
+    bgCtx.fillRect(
+      0,
+      -constants.screenHeight * 999,
+      constants.screenWidth,
+      constants.screenHeight * 1000
+    )
+    bgCtx.translate(0, -yTranslate)
+  }
 
   //game.camera.draw(ctx)
 
