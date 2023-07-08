@@ -113,7 +113,7 @@ export class GameObject {
   }
 
   handleCollision(object: GameObject) {
-    if (this.isStatic || !this.isCollidable || !object.isCollidable) return
+    if (this.isStatic || !this.isCollidable) return
 
     if (object.type === GameObjectType.Platform) {
       this.handlePlatformCollision(object)
