@@ -6,7 +6,6 @@ let frameRef: number | null = null
 
 function main() {
   loop()
-  frameRef = requestAnimationFrame(main)
 }
 function stop() {
   if (frameRef) {
@@ -16,21 +15,21 @@ function stop() {
 }
 
 function loop() {
-  ctx.fillStyle = "#333"
+  ctx.fillStyle = "#111"
   ctx.fillRect(0, 0, constants.screenWidth, constants.screenHeight)
 
   game.tick()
   for (const object of game.objects) {
     object.draw(ctx, game.camera.offsetY)
   }
-  // // draw a pt to represent camera offset
-  // ctx.fillStyle = "red"
-  // ctx.fillRect(constants.screenWidth / 2, game.camera.offsetY - 1, 2, 2)
+
+  game.camera.draw(ctx)
 
   // render score
   ctx.fillStyle = "white"
   ctx.font = "20px Arial"
-  ctx.fillText(`Score: ${game.score}`, 10, 20)
+  ctx.fillText(`Height: ${game.score}`, 10, 20)
+  frameRef = requestAnimationFrame(loop)
 }
 
 main()

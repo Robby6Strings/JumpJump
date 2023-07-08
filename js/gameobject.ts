@@ -127,7 +127,7 @@ export class GameObject {
       }
     } else if (this.pos.y > platform.pos.y) {
       this.pos.y = platform.pos.y + platform.halfSize.height + this.halfSize.height
-      this.vel.y = this.vel.y * -0.5
+      this.vel.y = (this.vel.y * -1) / 2
     }
   }
 
