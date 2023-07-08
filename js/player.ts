@@ -29,6 +29,7 @@ export class Player extends GameObject {
       this.vel.x += this.speed
     }
     if (game.playerInputs.up && !this.isJumping) {
+      if (this.vel.y > 0) this.vel.y = 0
       this.vel.y -= this.jumpPower
       this.isJumping = true
     }
