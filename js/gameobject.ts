@@ -1,11 +1,12 @@
 import { constants } from "./constants.js"
 import { GameObjectType, Shape } from "./enums.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
+import type { Vec2 } from "./v2"
 
 export class GameObject {
   type: GameObjectType = GameObjectType.Unset
-  pos: { x: number; y: number } = { x: 0, y: 0 }
-  vel: { x: number; y: number } = { x: 0, y: 0 }
+  pos: Vec2 = { x: 0, y: 0 }
+  vel: Vec2 = { x: 0, y: 0 }
   speed: number = 5
   maxSpeed: number = 15
   jumpPower: number = 15
@@ -26,12 +27,12 @@ export class GameObject {
   isCollidable: boolean = true
   canLeaveMap: boolean = false
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, yOffset: number = 0) {
     if (this.img) {
       ctx.drawImage(
         this.img,
         this.pos.x,
-        this.pos.y,
+        this.pos.y - yOffset,
         this.size.width,
         this.size.height
       )
@@ -42,7 +43,13 @@ export class GameObject {
 
     if (this.shape === Shape.Circle) {
       ctx.beginPath()
-      ctx.arc(this.pos.x, this.pos.y, this.halfSize.width, 0, Math.PI * 2)
+      ctx.arc(
+        this.pos.x,
+        this.pos.y - yOffset,
+        this.halfSize.width,
+        0,
+        Math.PI * 2
+      )
       ctx.fill()
       ctx.closePath()
       return
@@ -50,7 +57,7 @@ export class GameObject {
 
     ctx.fillRect(
       this.pos.x - this.size.width / 2,
-      this.pos.y - this.size.height / 2,
+      this.pos.y - this.size.height / 2 - yOffset,
       this.size.width,
       this.size.height
     )

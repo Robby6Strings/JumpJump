@@ -1,8 +1,9 @@
 import { GameObjectType } from "./enums.js"
 import { GameObject } from "./gameobject.js"
+import type { Vec2 } from "./v2"
 
 type PlatformConstructor = {
-  pos: { x: number; y: number }
+  pos: Vec2
   size: { width: number; height: number }
   behaviours?: PlatformBehaviour[]
 }
@@ -33,6 +34,21 @@ export class Platform extends GameObject {
     if (behaviours) {
       this.behaviours = behaviours
     }
+  }
+
+  static randomPlatform(pos: Vec2): Platform {
+    const size = {
+      width: Math.random() * 100 + 50,
+      height: Math.random() * 20 + 10,
+    }
+    const behaviours = [PlatformBehaviour.Bounce]
+    if (Math.random() > 0.5) {
+      behaviours.push(PlatformBehaviour.MovesX)
+    }
+    if (Math.random() > 0.5) {
+      behaviours.push(PlatformBehaviour.MovesY)
+    }
+    return new Platform({ pos, size, behaviours })
   }
 
   tick(): void {

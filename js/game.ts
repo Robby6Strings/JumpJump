@@ -2,9 +2,11 @@ import { constants } from "./constants.js"
 import { GameObject } from "./gameobject.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
 import { Player } from "./player.js"
+import { Camera } from "./camera.js"
 
 export class Game {
   objects: GameObject[] = []
+  camera: Camera
   playerInputs = {
     left: false,
     right: false,
@@ -12,8 +14,13 @@ export class Game {
     down: false,
     space: false,
   }
+  score: number = 0
+  player: Player
+  sectionIndex: number
   constructor() {
+    this.player = new Player()
     this.objects = [
+      this.player,
       new Player(),
       new Platform({
         size: { width: 200, height: 20 },
@@ -25,10 +32,27 @@ export class Game {
       }),
       new Platform({
         size: { width: 200, height: 20 },
+        pos: {
+          x: 500,
+          y: constants.screenHeight - 200,
+        },
+        behaviours: [PlatformBehaviour.MovesY],
+      }),
+
+      new Platform({
+        size: { width: 200, height: 20 },
         pos: { x: 200, y: constants.screenHeight - 260 },
         behaviours: [PlatformBehaviour.Bounce, PlatformBehaviour.MovesX],
       }),
     ]
+    this.camera = new Camera(this.player)
+    this.sectionIndex = 0
+  }
+
+  set section(index: number) {
+    if (index <= this.sectionIndex) return
+    this.sectionIndex = index
+    this.generateNextSection()
   }
 
   tick() {
@@ -36,6 +60,31 @@ export class Game {
       object.tick()
     }
     this.handleCollisions()
+    this.camera.tick()
+    this.score = 0
+    const halfScreenHeight = constants.screenHeight / 2
+    if (this.player.pos.y < halfScreenHeight) {
+      this.score = Math.abs(
+        Math.floor(this.player.pos.y - halfScreenHeight / 10)
+      )
+    }
+    this.section =
+      Math.abs(Math.floor(this.player.pos.y / constants.screenHeight)) + 1
+  }
+
+  generateNextSection() {
+    console.log("Generating section", this.sectionIndex)
+    const platforms = []
+    for (let i = 0; i < 3; i++) {
+      platforms.push(
+        Platform.randomPlatform({
+          x: Math.random() * constants.screenWidth,
+          y:
+            constants.screenHeight - this.sectionIndex * constants.screenHeight,
+        })
+      )
+    }
+    this.objects.push(...platforms)
   }
 
   handleCollisions() {

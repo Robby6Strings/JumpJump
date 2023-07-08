@@ -10,9 +10,13 @@ export class Player extends GameObject {
     this.size.width = 50
     this.size.height = 50
     this.pos.x = constants.screenWidth / 2
-    this.pos.y = constants.screenHeight - this.size.height / 2
+    this.pos.y = constants.screenHeight - this.halfSize.height
     this.isStatic = false
     this.affectedByGravity = true
+  }
+
+  get distanceFromGround(): number {
+    return constants.screenHeight - this.pos.y - this.halfSize.height
   }
 
   tick(): void {
