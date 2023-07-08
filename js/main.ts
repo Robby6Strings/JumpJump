@@ -27,7 +27,7 @@ function loop() {
 
   // render score
   ctx.fillStyle = "white"
-  ctx.font = "20px Arial"
+  ctx.font = "13px monospace"
   ctx.fillText(`Height: ${game.score}`, 10, 20)
   frameRef = requestAnimationFrame(loop)
 }

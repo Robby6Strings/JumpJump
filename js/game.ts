@@ -62,14 +62,10 @@ export class Game {
     this.handleCollisions()
     this.camera.tick()
     this.score = 0
-    const halfScreenHeight = constants.screenHeight / 2
-    if (this.player.pos.y < halfScreenHeight) {
-      this.score = Math.abs(
-        Math.floor(this.player.pos.y - halfScreenHeight / 10)
-      )
-    }
-    this.section =
-      Math.abs(Math.floor(this.player.pos.y / constants.screenHeight)) + 1
+    this.score = Math.floor(
+      Math.abs(this.player.pos.y - constants.screenHeight + this.player.halfSize.height) / 50
+    )
+    this.section = Math.abs(Math.floor(this.player.pos.y / constants.screenHeight)) + 1
   }
 
   generateNextSection() {
@@ -79,8 +75,7 @@ export class Game {
       platforms.push(
         Platform.randomPlatform({
           x: Math.random() * constants.screenWidth,
-          y:
-            constants.screenHeight - this.sectionIndex * constants.screenHeight,
+          y: constants.screenHeight - this.sectionIndex * constants.screenHeight,
         })
       )
     }
