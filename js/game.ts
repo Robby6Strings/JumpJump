@@ -1,6 +1,6 @@
 import { constants } from "./constants.js"
 import { GameObject } from "./gameobject.js"
-import { Platform } from "./platform.js"
+import { Platform, PlatformBehaviour } from "./platform.js"
 import { Player } from "./player.js"
 
 export class Game {
@@ -17,18 +17,16 @@ export class Game {
       new Player(),
       new Platform({
         size: { width: 200, height: 20 },
-        pos: { x: 100, y: constants.screenHeight - 120 },
-      }),
-      new Platform({
-        size: { width: 200, height: 20 },
         pos: {
-          x: constants.screenWidth - 100,
+          x: 100,
           y: constants.screenHeight - 120,
         },
+        behaviours: [PlatformBehaviour.MovesY],
       }),
       new Platform({
         size: { width: 200, height: 20 },
         pos: { x: 200, y: constants.screenHeight - 260 },
+        behaviours: [PlatformBehaviour.Bounce, PlatformBehaviour.MovesX],
       }),
     ]
   }

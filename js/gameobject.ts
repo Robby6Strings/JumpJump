@@ -1,5 +1,6 @@
 import { constants } from "./constants.js"
 import { GameObjectType, Shape } from "./enums.js"
+import { Platform, PlatformBehaviour } from "./platform.js"
 
 export class GameObject {
   type: GameObjectType = GameObjectType.Unset
@@ -116,21 +117,18 @@ export class GameObject {
     if (this.isStatic || !this.isCollidable) return
 
     if (object.type === GameObjectType.Platform) {
-      this.handlePlatformCollision(object)
+      this.handlePlatformCollision(object as Platform)
     }
   }
 
-  handlePlatformCollision(object: GameObject) {
+  handlePlatformCollision(object: Platform) {
     if (this.isStatic || !this.isCollidable) return
     if (this.pos.y < object.pos.y) {
       this.pos.y = object.pos.y - object.halfSize.height - this.halfSize.height
       this.vel.y = 0
-      if (
-        this.pos.x - this.halfSize.width >
-          object.pos.x - object.halfSize.width &&
-        this.pos.x + this.halfSize.width < object.pos.x + object.halfSize.width
-      ) {
-        this.isJumping = false
+      this.isJumping = false
+      if (object.hasBehaviour(PlatformBehaviour.Bounce)) {
+        this.vel.y = -this.jumpPower
       }
     } else if (this.pos.y > object.pos.y) {
       this.pos.y = object.pos.y + object.halfSize.height + this.halfSize.height
