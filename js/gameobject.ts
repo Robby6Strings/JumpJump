@@ -29,13 +29,7 @@ export class GameObject {
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number = 0) {
     if (this.img) {
-      ctx.drawImage(
-        this.img,
-        this.pos.x,
-        this.pos.y - yOffset,
-        this.size.width,
-        this.size.height
-      )
+      ctx.drawImage(this.img, this.pos.x, this.pos.y - yOffset, this.size.width, this.size.height)
       return
     }
 
@@ -43,13 +37,7 @@ export class GameObject {
 
     if (this.shape === Shape.Circle) {
       ctx.beginPath()
-      ctx.arc(
-        this.pos.x,
-        this.pos.y - yOffset,
-        this.halfSize.width,
-        0,
-        Math.PI * 2
-      )
+      ctx.arc(this.pos.x, this.pos.y - yOffset, this.halfSize.width, 0, Math.PI * 2)
       ctx.fill()
       ctx.closePath()
       return
@@ -123,23 +111,23 @@ export class GameObject {
   handleCollision(object: GameObject) {
     if (this.isStatic || !this.isCollidable) return
 
-    if (object.type === GameObjectType.Platform) {
+    if (this.type === GameObjectType.Player && object.type === GameObjectType.Platform) {
       this.handlePlatformCollision(object as Platform)
     }
   }
 
-  handlePlatformCollision(object: Platform) {
+  handlePlatformCollision(platform: Platform) {
     if (this.isStatic || !this.isCollidable) return
-    if (this.pos.y < object.pos.y) {
-      this.pos.y = object.pos.y - object.halfSize.height - this.halfSize.height
+    if (this.pos.y - this.halfSize.height < platform.pos.y - platform.halfSize.height) {
+      this.pos.y = platform.pos.y - platform.halfSize.height - this.halfSize.height
       this.vel.y = 0
       this.isJumping = false
-      if (object.hasBehaviour(PlatformBehaviour.Bounce)) {
+      if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
         this.vel.y = -this.jumpPower
       }
-    } else if (this.pos.y > object.pos.y) {
-      this.pos.y = object.pos.y + object.halfSize.height + this.halfSize.height
-      this.vel.y = 0
+    } else if (this.pos.y > platform.pos.y) {
+      this.pos.y = platform.pos.y + platform.halfSize.height + this.halfSize.height
+      this.vel.y = this.vel.y * -0.5
     }
   }
 
@@ -157,16 +145,12 @@ export class GameObject {
   }
 
   isCircleCollidingCircle(object: GameObject) {
-    const distance = Math.sqrt(
-      (this.pos.x - object.pos.x) ** 2 + (this.pos.y - object.pos.y) ** 2
-    )
+    const distance = Math.sqrt((this.pos.x - object.pos.x) ** 2 + (this.pos.y - object.pos.y) ** 2)
     return distance < this.halfSize.width + object.halfSize.width
   }
 
   isCircleCollidingRectangle(object: GameObject) {
-    const distance = Math.sqrt(
-      (this.pos.x - object.pos.x) ** 2 + (this.pos.y - object.pos.y) ** 2
-    )
+    const distance = Math.sqrt((this.pos.x - object.pos.x) ** 2 + (this.pos.y - object.pos.y) ** 2)
     return distance < this.halfSize.width + object.halfSize.width
   }
 
@@ -174,8 +158,7 @@ export class GameObject {
     return (
       this.pos.x - this.halfSize.width < object.pos.x + object.halfSize.width &&
       this.pos.x + this.halfSize.width > object.pos.x - object.halfSize.width &&
-      this.pos.y - this.halfSize.height <
-        object.pos.y + object.halfSize.height &&
+      this.pos.y - this.halfSize.height < object.pos.y + object.halfSize.height &&
       this.pos.y + this.halfSize.height > object.pos.y - object.halfSize.height
     )
   }
