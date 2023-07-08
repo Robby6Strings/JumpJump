@@ -122,11 +122,16 @@ export class GameObject {
 
   handlePlatformCollision(object: GameObject) {
     if (this.isStatic || !this.isCollidable) return
-    if (!object.isCollidable) return
     if (this.pos.y < object.pos.y) {
       this.pos.y = object.pos.y - object.halfSize.height - this.halfSize.height
       this.vel.y = 0
-      this.isJumping = false
+      if (
+        this.pos.x - this.halfSize.width >
+          object.pos.x - object.halfSize.width &&
+        this.pos.x + this.halfSize.width < object.pos.x + object.halfSize.width
+      ) {
+        this.isJumping = false
+      }
     } else if (this.pos.y > object.pos.y) {
       this.pos.y = object.pos.y + object.halfSize.height + this.halfSize.height
       this.vel.y = 0
