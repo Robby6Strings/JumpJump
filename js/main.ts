@@ -48,19 +48,21 @@ function stop() {
 
 function loop() {
   ctx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
+
+  game.tick()
+  for (const object of game.objects) {
+    object.draw(ctx, game.camera.offsetY)
+  }
+
   bgCtx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
-  bgCtx.translate(0, game.player.vel.y * -images[0].speed)
+  bgCtx.resetTransform()
+  bgCtx.translate(0, -game.camera.offsetY * images[0].speed + game.player.vel.y * -images[0].speed)
   bgCtx.fillRect(
     0,
     -constants.screenHeight * 999,
     constants.screenWidth,
     constants.screenHeight * 1000
   )
-
-  game.tick()
-  for (const object of game.objects) {
-    object.draw(ctx, game.camera.offsetY)
-  }
 
   //game.camera.draw(ctx)
 
