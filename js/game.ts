@@ -97,10 +97,10 @@ export class Game {
       if (Math.random() > 0.66) {
         this.items.push(new Item({ x, y: y - constants.sectionHeight / 2 }, ItemType.Coin))
         if (Math.random() > 0.66) {
-          this.items.push(new Item({ x, y: y - constants.sectionHeight / 2 - 80 }, ItemType.Coin))
+          this.items.push(new Item({ x, y: y - constants.sectionHeight / 2 - 64 }, ItemType.Coin))
           if (Math.random() > 0.66) {
             this.items.push(
-              new Item({ x, y: y - constants.sectionHeight / 2 - 160 }, ItemType.Coin)
+              new Item({ x, y: y - constants.sectionHeight / 2 - 128 }, ItemType.Coin)
             )
           }
         }
