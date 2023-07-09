@@ -3,6 +3,7 @@ import { GameObject } from "./gameobject.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
+import { GameObjectType } from "./enums.js"
 
 export class Game {
   objects: GameObject[] = []
@@ -16,12 +17,12 @@ export class Game {
   }
   score: number = 0
   player: Player
-  sectionIndex: number
+  maxSection: number
+  isGameOver: boolean = false
   constructor() {
     this.player = new Player()
     this.objects = [
       this.player,
-      new Player(),
       new Platform({
         size: { width: 250, height: 20 },
         pos: { x: 200, y: constants.screenHeight - 120 },
@@ -29,14 +30,27 @@ export class Game {
       }),
     ]
     this.camera = new Camera(this.player)
-    this.sectionIndex = 1
+    this.maxSection = 1
     this.generateNextSection()
   }
 
   set section(index: number) {
-    if (index <= this.sectionIndex) return
-    this.sectionIndex = index
+    if (index <= this.maxSection) {
+      if (index === this.maxSection - 3) {
+        this.onGameOver()
+      }
+      return
+    }
+    this.maxSection = index
     this.generateNextSection()
+  }
+
+  onGameOver() {
+    if (this.isGameOver) return
+    this.isGameOver = true
+    setTimeout(() => {
+      game = new Game()
+    }, 1000)
   }
 
   tick() {
@@ -57,6 +71,24 @@ export class Game {
     const platformCount = 3
     const areaWidth = constants.screenWidth / platformCount
 
+    if (this.maxSection > 2) {
+      if (this.maxSection % 2 === 0) {
+        if (this.maxSection === 4) {
+          // delete our starter platform
+          const platform = this.objects.find((o) => o.type === GameObjectType.Platform)!
+          this.objects.splice(this.objects.indexOf(platform), 1)
+        }
+
+        // find the first 3 platforms in the objects array and delete them
+        for (let i = 0; i < platformCount * 2; i++) {
+          const platform = this.objects.find((o) => o.type === GameObjectType.Platform)
+          if (platform) {
+            this.objects.splice(this.objects.indexOf(platform), 1)
+          }
+        }
+      }
+    }
+
     for (let i = 0; i < platformCount; i++) {
       const heightVariance = 100
 
@@ -65,7 +97,7 @@ export class Game {
           x: Math.random() * (i + 1) * areaWidth,
           y:
             constants.sectionHeight -
-            this.sectionIndex * constants.sectionHeight +
+            this.maxSection * constants.sectionHeight +
             Math.random() * heightVariance -
             heightVariance / 2,
         })
@@ -81,7 +113,7 @@ export class Game {
   }
 }
 
-export const game = new Game()
+export let game = new Game()
 window.addEventListener("keydown", (e) => {
   switch (e.key.toLowerCase()) {
     case "arrowleft":

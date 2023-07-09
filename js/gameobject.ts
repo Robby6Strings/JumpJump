@@ -120,15 +120,17 @@ export class GameObject {
   handlePlatformCollision(platform: Platform) {
     if (this.isStatic || !this.isCollidable) return
     if (this.pos.y - this.halfSize.height < platform.pos.y - platform.halfSize.height) {
-      this.pos.y = platform.pos.y - platform.halfSize.height - this.halfSize.height
-      this.vel.y = 0
-      this.isJumping = false
-      if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
-        this.vel.y = -(this.jumpPower / 1.5)
+      if (this.vel.y >= 0) {
+        this.pos.y = platform.pos.y - platform.halfSize.height - this.halfSize.height
+        this.vel.y = 0
+        this.isJumping = false
+        if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
+          this.vel.y = -this.jumpPower
+        }
       }
-    } else if (this.pos.y > platform.pos.y) {
-      this.pos.y = platform.pos.y + platform.halfSize.height + this.halfSize.height
-      this.vel.y = (this.vel.y * -1) / 2
+    } else if (this.pos.y > platform.pos.y + platform.halfSize.height) {
+      // this.pos.y = platform.pos.y + platform.halfSize.height + this.halfSize.height
+      // this.vel.y = (this.vel.y * -1) / 2
     }
   }
 

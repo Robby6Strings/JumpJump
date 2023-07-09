@@ -19,7 +19,7 @@ export class Camera {
   lerpToTarget() {
     const target = this.targetY - constants.screenHeight / 2
     const diff = target - this.offsetY
-    this.offsetY += diff * 0.1
+    this.offsetY += diff * 0.15
   }
   draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "red"
