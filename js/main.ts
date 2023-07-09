@@ -3,10 +3,10 @@ import { constants } from "./constants.js"
 import { getImages, loadImages } from "./images.js"
 import { Game } from "./game.js"
 
-const createNewGame = () => {
-  return new Game(createNewGame)
-}
 export let game: Game | undefined = undefined
+const createNewGame = () => {
+  game = new Game(createNewGame)
+}
 
 let frameRef: number | null = null
 let bgImage: HTMLImageElement | null = null
@@ -31,7 +31,7 @@ function main() {
     constants.screenWidth,
     constants.screenHeight * 1000
   )
-  game = createNewGame()
+  createNewGame()
 
   loop()
 }

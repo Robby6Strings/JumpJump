@@ -9,6 +9,7 @@ export interface IItem {
 
 export class Item extends GameObject implements IItem {
   itemType: ItemType = ItemType.Unset
+  deleted: boolean = false
 
   constructor(pos: Vec2, itemType: ItemType) {
     super()
@@ -47,4 +48,9 @@ export class Item extends GameObject implements IItem {
     }
   }
   tick() {}
+
+  draw(ctx: CanvasRenderingContext2D, yOffset?: number): void {
+    if (this.deleted) return
+    super.draw(ctx, yOffset)
+  }
 }

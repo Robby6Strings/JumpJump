@@ -130,7 +130,10 @@ export class GameObject {
           this.handlePlatformCollision(object as Platform)
           break
         case GameObjectType.Item:
-          this.addItem(object as Item)
+          const item = object as Item
+          this.addItem(item)
+          item.deleted = true
+          item.isCollidable = false
           break
         default:
           break
