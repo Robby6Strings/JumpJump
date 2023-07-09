@@ -49,12 +49,6 @@ export class Game {
     if (this.isGameOver) return
     this.isGameOver = true
     setTimeout(() => {
-      bgCtx.fillRect(
-        0,
-        -constants.screenHeight * 999,
-        constants.screenWidth,
-        constants.screenHeight * 1000
-      )
       game = new Game()
     }, 1000)
   }
