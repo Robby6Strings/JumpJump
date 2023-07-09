@@ -35,6 +35,8 @@ export class Platform extends GameObject {
     this.behaviours = behaviours
     if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
       this.color = "#55F"
+      this.glowColor = "#55F"
+      this.glows = true
     }
   }
 

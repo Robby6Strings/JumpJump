@@ -20,6 +20,9 @@ export class GameObject {
     }
   }
   color: string = "white"
+  glowColor: string = "white"
+  glows: boolean = false
+  glowSize: number = 10
   shape: Shape = Shape.Rectangle
   img: HTMLImageElement | null = null
   isStatic: boolean = true
@@ -46,6 +49,13 @@ export class GameObject {
         this.size.height,
         3
       )
+    }
+
+    if (this.glows) {
+      ctx.shadowBlur = this.glowSize
+      ctx.shadowColor = this.glowColor
+    } else {
+      ctx.shadowBlur = 0
     }
 
     ctx.fill()
