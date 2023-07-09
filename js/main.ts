@@ -1,13 +1,17 @@
 import { ctx, bgCtx } from "./elements.js"
 import { constants } from "./constants.js"
-import { loadImages, images } from "./images.js"
+import { getImages, loadImages } from "./images.js"
 import { game } from "./game.js"
+import { Item, ItemType } from "./item.js"
 
 let frameRef: number | null = null
 let bgImage: HTMLImageElement | null = null
+let bgImageSpeed = 0
 
 loadImages(() => {
+  const images = getImages()
   bgImage = images[0].image
+  bgImageSpeed = images[0].speed
   main()
 })
 
@@ -24,6 +28,8 @@ function main() {
     constants.screenHeight * 1000
   )
 
+  game.items.push(new Item({ x: 200, y: constants.screenHeight - 120 }, ItemType.Coin))
+
   loop()
 }
 function stop() {
@@ -37,14 +43,17 @@ function loop() {
   ctx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
 
   game.tick()
-  for (const object of game.platforms) {
-    object.draw(ctx, game.camera.offsetY)
+  for (const platform of game.platforms) {
+    platform.draw(ctx, game.camera.offsetY)
+  }
+  for (const item of game.items) {
+    item.draw(ctx, game.camera.offsetY)
   }
   game.player.draw(ctx, game.camera.offsetY)
 
   const distanceDif = -game.camera.offsetY - lastDistance
   lastDistance = -game.camera.offsetY
-  const yTranslate = Math.round(distanceDif * images[0].speed)
+  const yTranslate = Math.round(distanceDif * bgImageSpeed)
   bgCtx.translate(0, yTranslate)
   bgCtx.fillRect(
     0,

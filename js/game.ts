@@ -1,10 +1,8 @@
 import { constants } from "./constants.js"
-import { GameObject } from "./gameobject.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
+import { Item, ItemType } from "./item.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
-import { GameObjectType } from "./enums.js"
-import { bgCtx } from "./elements.js"
 
 export class Game {
   camera: Camera
@@ -18,6 +16,7 @@ export class Game {
   score: number = 0
   player: Player
   platforms: Platform[] = []
+  items: Item[] = []
   maxSection: number
   isGameOver: boolean = false
   constructor() {
@@ -29,6 +28,7 @@ export class Game {
         behaviours: [PlatformBehaviour.Bounce, PlatformBehaviour.MovesX],
       }),
     ]
+    this.items = []
     this.camera = new Camera(this.player)
     this.maxSection = 1
     this.generateNextSection()

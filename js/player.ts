@@ -22,6 +22,9 @@ export class Player extends GameObject {
     this.isStatic = false
     this.affectedByGravity = true
     this.color = "#69c"
+    this.glows = true
+    this.glowColor = "#000A"
+    this.glowSize = 3
   }
 
   get distanceFromGround(): number {
@@ -30,9 +33,6 @@ export class Player extends GameObject {
 
   tick(): void {
     let tempWidth = 50
-    // if (this.pos.y === constants.screenHeight - this.halfSize.height) {
-
-    // }
     const absVelX = Math.abs(this.vel.x)
     if (absVelX > 0) {
       this.size.height = Math.min(50, 50 - Math.abs(this.vel.x) / 2)
@@ -46,7 +46,6 @@ export class Player extends GameObject {
     }
 
     this.emitVelocityParticles()
-
     this.handleInputs()
     super.tick()
   }
@@ -58,6 +57,7 @@ export class Player extends GameObject {
 
   drawVelocityParticles(ctx: CanvasRenderingContext2D, yOffset: number): void {
     if (this.velocityParticles.length === 0) return
+    ctx.shadowBlur = 0
     this.velocityParticles.forEach((particle) => {
       ctx.fillStyle = particle.color
       ctx.fillRect(particle.pos.x, particle.pos.y - yOffset, particle.size, particle.size)

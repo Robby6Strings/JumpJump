@@ -33,10 +33,14 @@ export class Platform extends GameObject {
     this.isStatic = true
     this.canLeaveMap = true
     this.behaviours = behaviours
+    this.glows = true
+
     if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
       this.color = "#55F"
       this.glowColor = "#228"
-      this.glows = true
+    } else {
+      this.glowSize = 3
+      this.glowColor = "#000A"
     }
   }
 

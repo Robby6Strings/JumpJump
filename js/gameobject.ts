@@ -31,6 +31,13 @@ export class GameObject {
   canLeaveMap: boolean = false
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number = 0) {
+    if (this.glows) {
+      ctx.shadowBlur = this.glowSize
+      ctx.shadowColor = this.glowColor
+    } else {
+      ctx.shadowBlur = 0
+    }
+
     if (this.img) {
       ctx.drawImage(this.img, this.pos.x, this.pos.y - yOffset, this.size.width, this.size.height)
       return
@@ -49,14 +56,6 @@ export class GameObject {
         this.size.height,
         3
       )
-    }
-
-    if (this.glows) {
-      ctx.shadowBlur = this.glowSize
-      ctx.shadowColor = this.glowColor
-    } else {
-      ctx.shadowBlur = 3
-      ctx.shadowColor = "#000A"
     }
 
     ctx.fill()
