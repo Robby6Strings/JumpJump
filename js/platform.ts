@@ -46,7 +46,7 @@ export class Platform extends GameObject {
       height: Math.random() * 10 + 20,
     }
     const behaviours = [PlatformBehaviour.Bounce]
-    if (Math.random() > 0.4) {
+    if (Math.random() > 0.95) {
       behaviours.push(PlatformBehaviour.SuperBounce)
     }
     if (Math.random() > 0.5) {
