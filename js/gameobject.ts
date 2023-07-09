@@ -30,6 +30,7 @@ export class GameObject {
   isStatic: boolean = true
   affectedByGravity: boolean = false
   isCollidable: boolean = true
+  isColliding: boolean = false
   canLeaveMap: boolean = false
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number = 0) {
@@ -119,10 +120,13 @@ export class GameObject {
   handleCollisions(objects: GameObject[]) {
     if (!this.isCollidable) return
     if (this.isStatic) return
+    this.isColliding = false
+
     for (const object of objects) {
       if (object === this) continue
       if (!object.isCollidable) continue
-      if (!this.isColliding(object)) continue
+      if (!this.isCollidingWith(object)) continue
+      this.isColliding = true
       this.handleCollision(object)
     }
   }
@@ -135,9 +139,11 @@ export class GameObject {
           break
         case GameObjectType.Item:
           const item = object as Item
-          this.addItem(item)
-          item.deleted = true
-          item.isCollidable = false
+          const remove = item.interactWith(this)
+          if (remove) {
+            item.deleted = true
+            item.isCollidable = false
+          }
           break
         default:
           break
@@ -171,7 +177,7 @@ export class GameObject {
     }
   }
 
-  isColliding(object: GameObject) {
+  isCollidingWith(object: GameObject) {
     if (this.shape === Shape.Circle) {
       if (object.shape === Shape.Circle) {
         return this.isCircleCollidingCircle(object)

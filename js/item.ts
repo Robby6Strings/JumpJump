@@ -1,3 +1,4 @@
+import { constants } from "./constants.js"
 import { GameObjectType, ItemType, Shape } from "./enums.js"
 import { GameObject } from "./gameobject.js"
 import { getImages } from "./images.js"
@@ -10,6 +11,7 @@ export interface IItem {
 export class Item extends GameObject implements IItem {
   itemType: ItemType = ItemType.Unset
   deleted: boolean = false
+  isInteracting: boolean = false
 
   constructor(pos: Vec2, itemType: ItemType) {
     super()
@@ -27,16 +29,12 @@ export class Item extends GameObject implements IItem {
     const images = getImages()
     switch (this.itemType) {
       case ItemType.Coin:
-        this.img = images.find((i) => i.name === "coin.png")!.image
+        this.img = images.find((i) => i.name === "coin.png")?.image || null
         this.size = { width: 50, height: 50 }
         this.shape = Shape.Circle
         break
       case ItemType.Jetpack:
         this.img = images.find((i) => i.name === "jetpack.png")?.image || null
-        this.size = { width: 20, height: 20 }
-        break
-      case ItemType.Portal:
-        this.img = images.find((i) => i.name === "portal.png")?.image || null
         this.size = { width: 20, height: 20 }
         break
       case ItemType.Checkpoint:
@@ -47,7 +45,40 @@ export class Item extends GameObject implements IItem {
         break
     }
   }
-  tick() {}
+  tick() {
+    if (this instanceof Portal && this.otherPortal) {
+      if (this.isColliding || this.otherPortal.isColliding) return
+      this.isInteracting = false
+      this.otherPortal.isInteracting = false
+    }
+  }
+
+  interactWith(object: GameObject) {
+    switch (this.itemType) {
+      case ItemType.Portal:
+        if (this instanceof Portal && this.otherPortal) {
+          if (this.isInteracting) return false
+          if (this.otherPortal.isInteracting) return false
+
+          this.isInteracting = true
+          this.otherPortal.isInteracting = true
+          this.otherPortal.isColliding = true
+
+          object.pos.x = this.otherPortal.pos.x
+          object.pos.y = this.otherPortal.pos.y
+          setTimeout(() => {
+            if (this instanceof Portal && this.otherPortal) this.otherPortal.isColliding = false
+          }, 100)
+        }
+        break
+      case ItemType.Coin:
+        object.addItem(this)
+        return true
+      default:
+        break
+    }
+    return false
+  }
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number): void {
     if (this.deleted) return
@@ -55,5 +86,51 @@ export class Item extends GameObject implements IItem {
     // ctx.strokeStyle = "#FFF"
     // ctx.lineWidth = 2
     // ctx.strokeRect(this.pos.x, this.pos.y - yOffset, this.size.width, this.size.height)
+  }
+}
+
+export class Portal extends Item {
+  otherPortal: Portal | null = null
+  static portalSize: number = 100
+  constructor(pos: Vec2, private idx: number) {
+    super(pos, ItemType.Portal)
+    this.size.width = Portal.portalSize
+    this.size.height = Portal.portalSize
+    this.glowColor = "#0FF"
+    this.setImg()
+  }
+
+  static createPair(yOffset: number): [Portal, Portal] {
+    const size = Portal.portalSize
+    const x1 = size + Math.random() * (constants.screenWidth - size)
+    const pos1 = {
+      x: x1,
+      y: Math.random() * 500 + 100 + yOffset,
+    }
+
+    const nextAbove = Math.random() > 0.5
+
+    const y2 = nextAbove ? pos1.y - 100 - Math.random() * 300 : pos1.y + 100 + Math.random() * 300
+
+    const pos2 = {
+      x:
+        x1 > constants.screenWidth / 2
+          ? x1 - constants.screenWidth / 2
+          : x1 + constants.screenWidth / 2,
+      y: y2,
+    }
+
+    const portal1 = new Portal(pos1, 0)
+    const portal2 = new Portal(pos2, 1)
+    portal1.otherPortal = portal2
+    portal2.otherPortal = portal1
+    return [portal1, portal2]
+  }
+
+  setImg(): void {
+    const images = getImages()
+    this.img =
+      images.find((i) => i.name === `portal${this.idx === 0 ? "2" : ""}.png`)?.image || null
+    console.log("new portal img", this.img, this.idx)
   }
 }
