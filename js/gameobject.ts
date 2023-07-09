@@ -124,7 +124,9 @@ export class GameObject {
         this.pos.y = platform.pos.y - platform.halfSize.height - this.halfSize.height
         this.vel.y = 0
         this.isJumping = false
-        if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
+        if (platform.hasBehaviour(PlatformBehaviour.SuperBounce)) {
+          this.vel.y = -this.jumpPower * 2
+        } else if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
           this.vel.y = -this.jumpPower
         }
       }

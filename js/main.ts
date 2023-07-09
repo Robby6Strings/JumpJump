@@ -56,9 +56,10 @@ function loop() {
   ctx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
 
   game.tick()
-  for (const object of game.objects) {
+  for (const object of game.platforms) {
     object.draw(ctx, game.camera.offsetY)
   }
+  game.player.draw(ctx, game.camera.offsetY)
 
   const yTranslate =
     Math.abs(game.player.vel.y) <= 0

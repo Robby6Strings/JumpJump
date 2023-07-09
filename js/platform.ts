@@ -10,6 +10,7 @@ type PlatformConstructor = {
 
 export enum PlatformBehaviour {
   Bounce,
+  SuperBounce,
   MovesX,
   MovesY,
 }
@@ -32,6 +33,9 @@ export class Platform extends GameObject {
     this.isStatic = true
     this.canLeaveMap = true
     this.behaviours = behaviours
+    if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
+      this.color = "green"
+    }
   }
 
   static randomPlatform(pos: Vec2): Platform {
@@ -40,6 +44,9 @@ export class Platform extends GameObject {
       height: Math.random() * 10 + 20,
     }
     const behaviours = [PlatformBehaviour.Bounce]
+    if (Math.random() > 0.95) {
+      behaviours.push(PlatformBehaviour.SuperBounce)
+    }
     if (Math.random() > 0.5) {
       behaviours.push(PlatformBehaviour.MovesX)
     }
