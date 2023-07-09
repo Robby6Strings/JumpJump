@@ -41,7 +41,13 @@ export class GameObject {
     }
 
     if (this.img) {
-      ctx.drawImage(this.img, this.pos.x, this.pos.y - yOffset, this.size.width, this.size.height)
+      ctx.drawImage(
+        this.img,
+        this.pos.x - this.halfSize.width,
+        this.pos.y - yOffset - this.halfSize.height,
+        this.size.width,
+        this.size.height
+      )
       return
     }
 
@@ -52,8 +58,8 @@ export class GameObject {
       ctx.arc(this.pos.x, this.pos.y - yOffset, this.halfSize.width, 0, Math.PI * 2)
     } else {
       ctx.roundRect(
-        this.pos.x - this.size.width / 2,
-        this.pos.y - this.size.height / 2 - yOffset,
+        this.pos.x - this.halfSize.width,
+        this.pos.y - this.halfSize.height - yOffset,
         this.size.width,
         this.size.height,
         3
@@ -122,8 +128,6 @@ export class GameObject {
   }
 
   handleCollision(object: GameObject) {
-    if (this.isStatic || !this.isCollidable) return
-
     if (this.type === GameObjectType.Player) {
       switch (object.type) {
         case GameObjectType.Platform:
@@ -181,21 +185,37 @@ export class GameObject {
   }
 
   isCircleCollidingCircle(object: GameObject) {
-    const distance = Math.sqrt((this.pos.x - object.pos.x) ** 2 + (this.pos.y - object.pos.y) ** 2)
+    const distance = Math.sqrt(
+      Math.pow(object.pos.x - this.pos.x, 2) + Math.pow(object.pos.y - this.pos.y, 2)
+    )
     return distance < this.halfSize.width + object.halfSize.width
   }
 
   isCircleCollidingRectangle(object: GameObject) {
-    const distance = Math.sqrt((this.pos.x - object.pos.x) ** 2 + (this.pos.y - object.pos.y) ** 2)
-    return distance < this.halfSize.width + object.halfSize.width
+    const circleDistance = {
+      x: Math.abs(this.pos.x - object.pos.x),
+      y: Math.abs(this.pos.y - object.pos.y),
+    }
+
+    if (circleDistance.x > object.halfSize.width + this.halfSize.width) return false
+    if (circleDistance.y > object.halfSize.height + this.halfSize.height) return false
+
+    if (circleDistance.x <= object.halfSize.width) return true
+    if (circleDistance.y <= object.halfSize.height) return true
+
+    const cornerDistance_sq =
+      Math.pow(circleDistance.x - object.halfSize.width, 2) +
+      Math.pow(circleDistance.y - object.halfSize.height, 2)
+
+    return cornerDistance_sq <= Math.pow(this.halfSize.width, 2)
   }
 
   isRectangleCollidingRectangle(object: GameObject) {
     return (
-      this.pos.x - this.halfSize.width < object.pos.x + object.halfSize.width &&
       this.pos.x + this.halfSize.width > object.pos.x - object.halfSize.width &&
-      this.pos.y - this.halfSize.height < object.pos.y + object.halfSize.height &&
-      this.pos.y + this.halfSize.height > object.pos.y - object.halfSize.height
+      this.pos.x - this.halfSize.width < object.pos.x + object.halfSize.width &&
+      this.pos.y + this.halfSize.height > object.pos.y - object.halfSize.height &&
+      this.pos.y - this.halfSize.height < object.pos.y + object.halfSize.height
     )
   }
 }

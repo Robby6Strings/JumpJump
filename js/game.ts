@@ -94,7 +94,7 @@ export class Game {
         heightVariance / 2
 
       // chance to spawn a coin above the platform
-      if (Math.random() > 0.5) {
+      if (Math.random() > 0.66) {
         this.items.push(new Item({ x, y: y - 50 }, ItemType.Coin))
       }
       platforms.push(Platform.randomPlatform({ x, y }))

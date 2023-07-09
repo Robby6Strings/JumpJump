@@ -49,8 +49,11 @@ export class Item extends GameObject implements IItem {
   }
   tick() {}
 
-  draw(ctx: CanvasRenderingContext2D, yOffset?: number): void {
+  draw(ctx: CanvasRenderingContext2D, yOffset: number): void {
     if (this.deleted) return
     super.draw(ctx, yOffset)
+    // ctx.strokeStyle = "#FFF"
+    // ctx.lineWidth = 2
+    // ctx.strokeRect(this.pos.x, this.pos.y - yOffset, this.size.width, this.size.height)
   }
 }
