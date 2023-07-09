@@ -9,7 +9,7 @@ export class GameObject {
   vel: Vec2 = { x: 0, y: 0 }
   speed: number = 3
   maxSpeed: number = 12
-  jumpPower: number = 15
+  jumpPower: number = 20
   isJumping: boolean = false
 
   size: { width: number; height: number } = { width: 0, height: 0 }
@@ -119,15 +119,18 @@ export class GameObject {
 
   handlePlatformCollision(platform: Platform) {
     if (this.isStatic || !this.isCollidable) return
-    if (this.pos.y - this.halfSize.height < platform.pos.y - platform.halfSize.height) {
+    if (
+      this.pos.y + this.halfSize.height - this.vel.y <=
+      platform.pos.y + platform.halfSize.height
+    ) {
       if (this.vel.y >= 0) {
         this.pos.y = platform.pos.y - platform.halfSize.height - this.halfSize.height
         this.vel.y = 0
         this.isJumping = false
         if (platform.hasBehaviour(PlatformBehaviour.SuperBounce)) {
-          this.vel.y = -this.jumpPower * 2
+          this.vel.y = -(this.jumpPower * 1.5)
         } else if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
-          this.vel.y = -this.jumpPower
+          this.vel.y = -(this.jumpPower * 0.75)
         }
       }
     } else if (this.pos.y > platform.pos.y + platform.halfSize.height) {
