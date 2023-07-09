@@ -3,5 +3,5 @@ export const constants = {
   screenHeight: 480,
   sectionHeight: 480,
   gravity: 1.25,
-  friction: 1,
+  friction: 0.5,
 }

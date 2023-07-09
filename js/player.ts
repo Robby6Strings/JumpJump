@@ -6,7 +6,6 @@ import { Vec2 } from "./v2.js"
 
 type VelocityParticle = {
   pos: Vec2
-  vel: Vec2
   color: string
   size: number
 }
@@ -23,6 +22,10 @@ export class Player extends GameObject {
     this.isStatic = false
     this.affectedByGravity = true
     this.color = "#69c"
+  }
+
+  get distanceFromGround(): number {
+    return constants.screenHeight - this.pos.y - this.halfSize.height
   }
 
   tick(): void {
@@ -49,8 +52,8 @@ export class Player extends GameObject {
   }
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number): void {
-    super.draw(ctx, yOffset)
     this.drawVelocityParticles(ctx, yOffset)
+    super.draw(ctx, yOffset)
   }
 
   drawVelocityParticles(ctx: CanvasRenderingContext2D, yOffset: number): void {
@@ -62,31 +65,27 @@ export class Player extends GameObject {
   }
 
   emitVelocityParticles(): void {
+    const minVel = 5
     const absVelX = Math.abs(this.vel.x)
     const absVelY = Math.abs(this.vel.y)
-    if (absVelX > 0.5) {
+    const color = "#55F"
+    if (absVelX > minVel) {
       const particle: VelocityParticle = {
         pos: { x: this.pos.x, y: this.pos.y },
-        vel: { x: this.vel.x / 2, y: 0 },
-        color: "#55F",
-        size: absVelX / 2,
+        color,
+        size: absVelX / 3,
       }
       this.velocityParticles.push(particle)
     }
-    if (absVelY > 0.5) {
+    if (absVelY > minVel) {
       const particle: VelocityParticle = {
         pos: { x: this.pos.x, y: this.pos.y },
-        vel: { x: 0, y: this.vel.y / 2 },
-        color: "#55F",
-        size: absVelY / 2,
+        color,
+        size: absVelY / 3,
       }
       this.velocityParticles.push(particle)
     }
     this.velocityParticles.forEach((particle) => {
-      particle.pos.x += particle.vel.x
-      particle.pos.y += particle.vel.y
-      particle.vel.x *= 0.9
-      particle.vel.y *= 0.9
       particle.size *= 0.9
     })
     this.velocityParticles = this.velocityParticles.filter((particle) => particle.size > 0.5)

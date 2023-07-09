@@ -5,7 +5,7 @@ import { game } from "./game.js"
 let frameRef: number | null = null
 
 const backgroundLayers = [
-  { image: "space.png", speed: 0.25 },
+  { image: "space.png", speed: 0.166 },
   { image: "stars.jpg", speed: 0.166 },
   { image: "castle.jpg", speed: 0.166 },
 ]
@@ -55,8 +55,7 @@ function stop() {
     frameRef = null
   }
 }
-let totalTranslation = 0
-let didReset = true
+let lastDistance = 0
 function loop() {
   ctx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
 
@@ -66,32 +65,16 @@ function loop() {
   }
   game.player.draw(ctx, game.camera.offsetY)
 
-  if (game.player.pos.y < constants.screenHeight / 2) {
-    didReset = false
-
-    const yTranslate = game.player.vel.y * -images[0].speed
-    totalTranslation += yTranslate
-    bgCtx.translate(0, yTranslate)
-    bgCtx.fillRect(
-      0,
-      -constants.screenHeight * 999,
-      constants.screenWidth,
-      constants.screenHeight * 1000
-    )
-  } else if (!didReset) {
-    bgCtx.translate(0, -totalTranslation)
-    bgCtx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
-    bgCtx.fillRect(
-      0,
-      -constants.screenHeight * 999,
-      constants.screenWidth,
-      constants.screenHeight * 1000
-    )
-    totalTranslation = 0
-    didReset = true
-  }
-
-  //game.camera.draw(ctx)
+  const distanceDif = -game.camera.offsetY - lastDistance
+  lastDistance = -game.camera.offsetY
+  const yTranslate = Math.round(distanceDif * images[0].speed)
+  bgCtx.translate(0, yTranslate)
+  bgCtx.fillRect(
+    0,
+    -constants.screenHeight * 999,
+    constants.screenWidth,
+    constants.screenHeight * 1000
+  )
 
   // render score
   ctx.fillStyle = "white"
