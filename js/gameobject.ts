@@ -56,7 +56,7 @@ export class GameObject {
       ctx.shadowColor = this.glowColor
     } else {
       ctx.shadowBlur = 3
-      ctx.shadowColor = "black"
+      ctx.shadowColor = "#000A"
     }
 
     ctx.fill()
