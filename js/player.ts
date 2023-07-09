@@ -1,7 +1,8 @@
 import { constants } from "./constants.js"
-import { GameObjectType } from "./enums.js"
+import { GameObjectType, ItemType } from "./enums.js"
 import { game } from "./game.js"
 import { GameObject } from "./gameobject.js"
+import { Item } from "./item.js"
 import { Vec2 } from "./v2.js"
 
 type VelocityParticle = {
@@ -12,6 +13,7 @@ type VelocityParticle = {
 
 export class Player extends GameObject {
   velocityParticles: VelocityParticle[] = []
+  items: Item[] = []
   constructor() {
     super()
     this.type = GameObjectType.Player
@@ -25,6 +27,10 @@ export class Player extends GameObject {
     this.glows = true
     this.glowColor = "#000A"
     this.glowSize = 3
+  }
+
+  get coins(): number {
+    return this.items.filter((i) => i.itemType === ItemType.Coin).length
   }
 
   get distanceFromGround(): number {

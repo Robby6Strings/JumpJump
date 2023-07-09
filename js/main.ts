@@ -2,7 +2,8 @@ import { ctx, bgCtx } from "./elements.js"
 import { constants } from "./constants.js"
 import { getImages, loadImages } from "./images.js"
 import { game } from "./game.js"
-import { Item, ItemType } from "./item.js"
+import { Item } from "./item.js"
+import { ItemType } from "./enums.js"
 
 let frameRef: number | null = null
 let bgImage: HTMLImageElement | null = null
@@ -62,9 +63,11 @@ function loop() {
     constants.screenHeight * 1000
   )
 
-  // render score
+  // render height
   ctx.fillStyle = "white"
   ctx.font = "13px monospace"
   ctx.fillText(`Height: ${game.score}`, 10, 20)
   frameRef = requestAnimationFrame(loop)
+  // render coins
+  ctx.fillText(`Coins: ${game.player.coins}`, 10, 40)
 }

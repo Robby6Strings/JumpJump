@@ -1,6 +1,6 @@
 import { constants } from "./constants.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
-import { Item, ItemType } from "./item.js"
+import { Item } from "./item.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
 
@@ -55,8 +55,11 @@ export class Game {
 
   tick() {
     this.handleCollisions()
-    for (const object of this.platforms) {
-      object.tick()
+    for (const platform of this.platforms) {
+      platform.tick()
+    }
+    for (const item of this.items) {
+      item.tick()
     }
     this.player.tick()
     this.camera.tick()
@@ -102,6 +105,7 @@ export class Game {
 
   handleCollisions() {
     this.player.handleCollisions(this.platforms)
+    this.player.handleCollisions(this.items)
   }
 }
 

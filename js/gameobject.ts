@@ -1,5 +1,6 @@
 import { constants } from "./constants.js"
 import { GameObjectType, Shape } from "./enums.js"
+import { game } from "./game.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
 import type { Vec2 } from "./v2"
 
@@ -122,9 +123,23 @@ export class GameObject {
   handleCollision(object: GameObject) {
     if (this.isStatic || !this.isCollidable) return
 
-    if (this.type === GameObjectType.Player && object.type === GameObjectType.Platform) {
-      this.handlePlatformCollision(object as Platform)
+    if (this.type === GameObjectType.Player) {
+      switch (object.type) {
+        case GameObjectType.Platform:
+          this.handlePlatformCollision(object as Platform)
+          break
+        case GameObjectType.Item:
+          this.handleItemCollision(object)
+          break
+        default:
+          break
+      }
     }
+  }
+
+  handleItemCollision(item: GameObject) {
+    const items = game.items.splice(game.items.indexOf(item as any), 1)
+    game.player.items.push(...items)
   }
 
   handlePlatformCollision(platform: Platform) {

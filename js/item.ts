@@ -1,21 +1,14 @@
-import { Shape } from "./enums.js"
+import { GameObjectType, ItemType, Shape } from "./enums.js"
 import { GameObject } from "./gameobject.js"
 import { getImages } from "./images.js"
 import { Vec2 } from "./v2.js"
-
-export enum ItemType {
-  Unset,
-  Coin,
-  Jetpack,
-  Portal,
-  Checkpoint,
-}
 
 export class Item extends GameObject {
   itemType: ItemType = ItemType.Unset
 
   constructor(pos: Vec2, itemType: ItemType) {
     super()
+    this.type = GameObjectType.Item
     this.pos = pos
     this.itemType = itemType
     this.size = { width: 20, height: 20 }
@@ -49,7 +42,5 @@ export class Item extends GameObject {
         break
     }
   }
-  tick() {
-    this.pos.y += 1
-  }
+  tick() {}
 }

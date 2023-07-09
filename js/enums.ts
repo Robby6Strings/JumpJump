@@ -14,4 +14,13 @@ export enum GameObjectType {
   Unset,
   Player,
   Platform,
+  Item,
+}
+
+export enum ItemType {
+  Unset,
+  Coin,
+  Jetpack,
+  Portal,
+  Checkpoint,
 }
