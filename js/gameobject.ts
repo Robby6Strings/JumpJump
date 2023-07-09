@@ -44,7 +44,7 @@ export class GameObject {
         this.pos.y - this.size.height / 2 - yOffset,
         this.size.width,
         this.size.height,
-        2
+        3
       )
     }
 

@@ -4,6 +4,7 @@ import { Platform, PlatformBehaviour } from "./platform.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
 import { GameObjectType } from "./enums.js"
+import { bgCtx } from "./elements.js"
 
 export class Game {
   camera: Camera
@@ -48,6 +49,12 @@ export class Game {
     if (this.isGameOver) return
     this.isGameOver = true
     setTimeout(() => {
+      bgCtx.fillRect(
+        0,
+        -constants.screenHeight * 999,
+        constants.screenWidth,
+        constants.screenHeight * 1000
+      )
       game = new Game()
     }, 1000)
   }

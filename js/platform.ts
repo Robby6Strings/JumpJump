@@ -29,12 +29,12 @@ export class Platform extends GameObject {
     this.type = GameObjectType.Platform
     this.pos = pos
     this.size = size
-    this.color = "#bbb"
+    this.color = "#66A"
     this.isStatic = true
     this.canLeaveMap = true
     this.behaviours = behaviours
     if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
-      this.color = "green"
+      this.color = "#55F"
     }
   }
 

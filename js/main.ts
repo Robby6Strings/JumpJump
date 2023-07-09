@@ -4,7 +4,11 @@ import { game } from "./game.js"
 
 let frameRef: number | null = null
 
-const backgroundLayers = [{ image: "castle.jpg", speed: 0.33 }]
+const backgroundLayers = [
+  { image: "space.png", speed: 0.166 },
+  { image: "stars.jpg", speed: 0.166 },
+  { image: "castle.jpg", speed: 0.166 },
+]
 
 type Image = {
   image: HTMLImageElement
@@ -61,14 +65,8 @@ function loop() {
   }
   game.player.draw(ctx, game.camera.offsetY)
 
-  const yTranslate =
-    Math.abs(game.player.vel.y) <= 0
-      ? 0
-      : -game.camera.offsetY * images[0].speed + game.player.vel.y * -images[0].speed
-  if (yTranslate > 0) {
-    bgCtx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
-    //bgCtx.resetTransform()
-
+  if (game.player.pos.y < constants.screenHeight / 2) {
+    const yTranslate = game.player.vel.y * -images[0].speed
     bgCtx.translate(0, yTranslate)
     bgCtx.fillRect(
       0,
@@ -76,7 +74,6 @@ function loop() {
       constants.screenWidth,
       constants.screenHeight * 1000
     )
-    bgCtx.translate(0, -yTranslate)
   }
 
   //game.camera.draw(ctx)
