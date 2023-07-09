@@ -3,7 +3,11 @@ import { GameObject } from "./gameobject.js"
 import { getImages } from "./images.js"
 import { Vec2 } from "./v2.js"
 
-export class Item extends GameObject {
+export interface IItem {
+  itemType: ItemType
+}
+
+export class Item extends GameObject implements IItem {
   itemType: ItemType = ItemType.Unset
 
   constructor(pos: Vec2, itemType: ItemType) {

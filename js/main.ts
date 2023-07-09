@@ -1,9 +1,12 @@
 import { ctx, bgCtx } from "./elements.js"
 import { constants } from "./constants.js"
 import { getImages, loadImages } from "./images.js"
-import { game } from "./game.js"
-import { Item } from "./item.js"
-import { ItemType } from "./enums.js"
+import { Game } from "./game.js"
+
+const createNewGame = () => {
+  return new Game(createNewGame)
+}
+export let game: Game | undefined = undefined
 
 let frameRef: number | null = null
 let bgImage: HTMLImageElement | null = null
@@ -28,8 +31,7 @@ function main() {
     constants.screenWidth,
     constants.screenHeight * 1000
   )
-
-  game.items.push(new Item({ x: 200, y: constants.screenHeight - 120 }, ItemType.Coin))
+  game = createNewGame()
 
   loop()
 }
@@ -41,6 +43,7 @@ function stop() {
 }
 let lastDistance = 0
 function loop() {
+  if (!game) return
   ctx.clearRect(0, 0, constants.screenWidth, constants.screenHeight)
 
   game.tick()
@@ -67,7 +70,9 @@ function loop() {
   ctx.fillStyle = "white"
   ctx.font = "13px monospace"
   ctx.fillText(`Height: ${game.score}`, 10, 20)
-  frameRef = requestAnimationFrame(loop)
+
   // render coins
   ctx.fillText(`Coins: ${game.player.coins}`, 10, 40)
+
+  frameRef = requestAnimationFrame(loop)
 }

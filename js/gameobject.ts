@@ -1,6 +1,6 @@
 import { constants } from "./constants.js"
 import { GameObjectType, Shape } from "./enums.js"
-import { game } from "./game.js"
+import { IItem, Item } from "./item.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
 import type { Vec2 } from "./v2"
 
@@ -12,6 +12,7 @@ export class GameObject {
   maxSpeed: number = 12
   jumpPower: number = 20
   isJumping: boolean = false
+  items: IItem[] = []
 
   size: { width: number; height: number } = { width: 0, height: 0 }
   get halfSize() {
@@ -129,7 +130,7 @@ export class GameObject {
           this.handlePlatformCollision(object as Platform)
           break
         case GameObjectType.Item:
-          this.handleItemCollision(object)
+          this.addItem(object as Item)
           break
         default:
           break
@@ -137,9 +138,8 @@ export class GameObject {
     }
   }
 
-  handleItemCollision(item: GameObject) {
-    const items = game.items.splice(game.items.indexOf(item as any), 1)
-    game.player.items.push(...items)
+  addItem(item: IItem) {
+    this.items.push(item)
   }
 
   handlePlatformCollision(platform: Platform) {

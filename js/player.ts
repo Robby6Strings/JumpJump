@@ -1,6 +1,5 @@
 import { constants } from "./constants.js"
 import { GameObjectType, ItemType } from "./enums.js"
-import { game } from "./game.js"
 import { GameObject } from "./gameobject.js"
 import { Item } from "./item.js"
 import { Vec2 } from "./v2.js"
@@ -13,7 +12,15 @@ type VelocityParticle = {
 
 export class Player extends GameObject {
   velocityParticles: VelocityParticle[] = []
-  items: Item[] = []
+
+  inputs = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+    space: false,
+  }
+
   constructor() {
     super()
     this.type = GameObjectType.Player
@@ -27,6 +34,7 @@ export class Player extends GameObject {
     this.glows = true
     this.glowColor = "#000A"
     this.glowSize = 3
+    this.attachKeybinds()
   }
 
   get coins(): number {
@@ -98,16 +106,66 @@ export class Player extends GameObject {
   }
 
   handleInputs(): void {
-    if (game.playerInputs.left) {
+    if (this.inputs.left) {
       this.vel.x -= this.speed
     }
-    if (game.playerInputs.right) {
+    if (this.inputs.right) {
       this.vel.x += this.speed
     }
-    if (game.playerInputs.up && !this.isJumping) {
+    if (this.inputs.up && !this.isJumping) {
       if (this.vel.y > 0) this.vel.y = 0
       this.vel.y -= this.jumpPower
       this.isJumping = true
     }
+  }
+
+  attachKeybinds(): void {
+    window.addEventListener("keydown", (e) => {
+      switch (e.key.toLowerCase()) {
+        case "arrowleft":
+        case "a":
+          this.inputs.left = true
+          break
+        case "arrowright":
+        case "d":
+          this.inputs.right = true
+          break
+        case "arrowup":
+        case "w":
+          this.inputs.up = true
+          break
+        case "arrowdown":
+        case "s":
+          this.inputs.down = true
+          break
+        case " ":
+          this.inputs.space = true
+          break
+      }
+    })
+
+    window.addEventListener("keyup", (e) => {
+      switch (e.key.toLowerCase()) {
+        case "arrowleft":
+        case "a":
+          this.inputs.left = false
+          break
+        case "arrowright":
+        case "d":
+          this.inputs.right = false
+          break
+        case "arrowup":
+        case "w":
+          this.inputs.up = false
+          break
+        case "arrowdown":
+        case "s":
+          this.inputs.down = false
+          break
+        case " ":
+          this.inputs.space = false
+          break
+      }
+    })
   }
 }

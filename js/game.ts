@@ -1,25 +1,19 @@
 import { constants } from "./constants.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
-import { Item } from "./item.js"
+import { IItem, Item } from "./item.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
+import { ItemType } from "./enums.js"
 
 export class Game {
   camera: Camera
-  playerInputs = {
-    left: false,
-    right: false,
-    up: false,
-    down: false,
-    space: false,
-  }
   score: number = 0
   player: Player
   platforms: Platform[] = []
   items: Item[] = []
   maxSection: number
   isGameOver: boolean = false
-  constructor() {
+  constructor(private _onGameOver: () => void) {
     this.player = new Player()
     this.platforms = [
       new Platform({
@@ -45,11 +39,15 @@ export class Game {
     this.generateNextSection()
   }
 
+  removeItem(item: IItem) {
+    this.items.splice(this.items.indexOf(item as any), 1)
+  }
+
   onGameOver() {
     if (this.isGameOver) return
     this.isGameOver = true
     setTimeout(() => {
-      game = new Game()
+      this._onGameOver()
     }, 1000)
   }
 
@@ -88,17 +86,18 @@ export class Game {
 
     for (let i = 0; i < platformCount; i++) {
       const heightVariance = 100
+      const x = Math.random() * (i + 1) * areaWidth
+      const y =
+        constants.sectionHeight -
+        this.maxSection * constants.sectionHeight +
+        Math.random() * heightVariance -
+        heightVariance / 2
 
-      platforms.push(
-        Platform.randomPlatform({
-          x: Math.random() * (i + 1) * areaWidth,
-          y:
-            constants.sectionHeight -
-            this.maxSection * constants.sectionHeight +
-            Math.random() * heightVariance -
-            heightVariance / 2,
-        })
-      )
+      // chance to spawn a coin above the platform
+      if (Math.random() > 0.5) {
+        this.items.push(new Item({ x, y: y - 50 }, ItemType.Coin))
+      }
+      platforms.push(Platform.randomPlatform({ x, y }))
     }
     this.platforms.push(...platforms)
   }
@@ -108,52 +107,3 @@ export class Game {
     this.player.handleCollisions(this.items)
   }
 }
-
-export let game = new Game()
-window.addEventListener("keydown", (e) => {
-  switch (e.key.toLowerCase()) {
-    case "arrowleft":
-    case "a":
-      game.playerInputs.left = true
-      break
-    case "arrowright":
-    case "d":
-      game.playerInputs.right = true
-      break
-    case "arrowup":
-    case "w":
-      game.playerInputs.up = true
-      break
-    case "arrowdown":
-    case "s":
-      game.playerInputs.down = true
-      break
-    case " ":
-      game.playerInputs.space = true
-      break
-  }
-})
-
-window.addEventListener("keyup", (e) => {
-  switch (e.key.toLowerCase()) {
-    case "arrowleft":
-    case "a":
-      game.playerInputs.left = false
-      break
-    case "arrowright":
-    case "d":
-      game.playerInputs.right = false
-      break
-    case "arrowup":
-    case "w":
-      game.playerInputs.up = false
-      break
-    case "arrowdown":
-    case "s":
-      game.playerInputs.down = false
-      break
-    case " ":
-      game.playerInputs.space = false
-      break
-  }
-})
