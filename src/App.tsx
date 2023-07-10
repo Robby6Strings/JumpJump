@@ -1,3 +1,4 @@
+import { Transition } from "cinnabun-transitions"
 import { constants } from "./constants"
 import { loadImages } from "./images"
 import {
@@ -8,18 +9,17 @@ import {
   frameRef,
   game,
   images,
+  isShopOpen,
 } from "./state"
 
 export const App = () => {
   let canvasRef: HTMLCanvasElement | undefined = undefined
   let bgCanvasRef: HTMLCanvasElement | undefined = undefined
-  let fgCanvasRef: HTMLCanvasElement | undefined = undefined
   const onCanvasRefSet = () => {
-    if (canvasRef && bgCanvasRef && fgCanvasRef) {
+    if (canvasRef && bgCanvasRef) {
       HtmlElements.value = {
         canvas: canvasRef,
         bgCanvas: bgCanvasRef,
-        fgCanvas: fgCanvasRef,
       }
       loadImages(() => {
         const bgImageData = images.value.find((i) => i.name === "space.png")
@@ -32,7 +32,13 @@ export const App = () => {
   }
 
   return (
-    <div>
+    <div
+      style={{
+        width: constants.screenWidth + "px",
+        height: constants.screenHeight + "px",
+        position: "relative",
+      }}
+    >
       <canvas
         id="bg-canvas"
         onMounted={(el) => {
@@ -46,13 +52,14 @@ export const App = () => {
           onCanvasRefSet()
         }}
       />
-      <canvas
-        id="fg-canvas"
-        onMounted={(el) => {
-          fgCanvasRef = el.element as HTMLCanvasElement
-          onCanvasRefSet()
-        }}
-      />
+      <Transition
+        properties={[{ name: "opacity", from: "0", to: "1" }]}
+        id="shop-ui"
+        watch={isShopOpen}
+        bind:visible={() => isShopOpen.value}
+      >
+        <h1>Shop</h1>
+      </Transition>
     </div>
   )
 }

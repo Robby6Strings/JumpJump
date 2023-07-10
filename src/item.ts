@@ -2,7 +2,7 @@ import { constants } from "./constants"
 import { GameObjectType, ItemType, Shape } from "./enums"
 import { GameObject } from "./gameobject"
 import { Vec2 } from "./v2"
-import { images } from "./state"
+import { images, isShopOpen } from "./state"
 
 export interface IItem {
   itemType: ItemType
@@ -48,6 +48,7 @@ export class Item extends GameObject implements IItem {
         this.img =
           images.value.find((i) => i.name === "shop.png")?.image || null
         this.size = { width: 64, height: 64 }
+        this.glows = false
         break
       default:
         break
@@ -58,6 +59,10 @@ export class Item extends GameObject implements IItem {
       if (this.isColliding || this.otherPortal.isColliding) return
       this.isInteracting = false
       this.otherPortal.isInteracting = false
+      return
+    }
+    if (this.itemType === ItemType.Shop) {
+      if (!this.isColliding && isShopOpen.value) isShopOpen.value = false
     }
   }
 
@@ -90,7 +95,9 @@ export class Item extends GameObject implements IItem {
         }, 8_000)
         return true
       case ItemType.Shop:
-        break
+        if (isShopOpen.value) return false
+        isShopOpen.value = true
+        return false
       default:
         break
     }

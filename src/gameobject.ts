@@ -57,7 +57,13 @@ export class GameObject {
     ctx.beginPath()
 
     if (this.shape === Shape.Circle) {
-      ctx.arc(this.pos.x, this.pos.y - yOffset, this.halfSize.width, 0, Math.PI * 2)
+      ctx.arc(
+        this.pos.x,
+        this.pos.y - yOffset,
+        this.halfSize.width,
+        0,
+        Math.PI * 2
+      )
     } else {
       ctx.roundRect(
         this.pos.x - this.halfSize.width,
@@ -121,13 +127,16 @@ export class GameObject {
   handleCollisions(objects: GameObject[]) {
     if (!this.isCollidable) return
     if (this.isStatic) return
+
     this.isColliding = false
 
     for (const object of objects) {
+      object.isColliding = false
       if (object === this) continue
       if (!object.isCollidable) continue
       if (!this.isCollidingWith(object)) continue
       this.isColliding = true
+      object.isColliding = true
       this.handleCollision(object)
     }
   }
@@ -141,6 +150,7 @@ export class GameObject {
         case GameObjectType.Item:
           const item = object as Item
           const remove = item.interactWith(this)
+
           if (remove) {
             item.deleted = true
             item.isCollidable = false
@@ -163,7 +173,8 @@ export class GameObject {
       platform.pos.y + platform.halfSize.height
     ) {
       if (this.vel.y >= 0) {
-        this.pos.y = platform.pos.y - platform.halfSize.height - this.halfSize.height
+        this.pos.y =
+          platform.pos.y - platform.halfSize.height - this.halfSize.height
         this.vel.y = 0
         this.isJumping = false
         if (platform.hasBehaviour(PlatformBehaviour.MegaBounce)) {
@@ -195,7 +206,8 @@ export class GameObject {
 
   isCircleCollidingCircle(object: GameObject) {
     const distance = Math.sqrt(
-      Math.pow(object.pos.x - this.pos.x, 2) + Math.pow(object.pos.y - this.pos.y, 2)
+      Math.pow(object.pos.x - this.pos.x, 2) +
+        Math.pow(object.pos.y - this.pos.y, 2)
     )
     return distance < this.halfSize.width + object.halfSize.width
   }
@@ -206,8 +218,10 @@ export class GameObject {
       y: Math.abs(this.pos.y - object.pos.y),
     }
 
-    if (circleDistance.x > object.halfSize.width + this.halfSize.width) return false
-    if (circleDistance.y > object.halfSize.height + this.halfSize.height) return false
+    if (circleDistance.x > object.halfSize.width + this.halfSize.width)
+      return false
+    if (circleDistance.y > object.halfSize.height + this.halfSize.height)
+      return false
 
     if (circleDistance.x <= object.halfSize.width) return true
     if (circleDistance.y <= object.halfSize.height) return true
@@ -223,7 +237,8 @@ export class GameObject {
     return (
       this.pos.x + this.halfSize.width > object.pos.x - object.halfSize.width &&
       this.pos.x - this.halfSize.width < object.pos.x + object.halfSize.width &&
-      this.pos.y + this.halfSize.height > object.pos.y - object.halfSize.height &&
+      this.pos.y + this.halfSize.height >
+        object.pos.y - object.halfSize.height &&
       this.pos.y - this.halfSize.height < object.pos.y + object.halfSize.height
     )
   }
