@@ -23,4 +23,5 @@ export enum ItemType {
   Jetpack,
   Portal,
   Checkpoint,
+  AntiGravity,
 }

@@ -18,7 +18,7 @@ export class Item extends GameObject implements IItem {
     this.type = GameObjectType.Item
     this.pos = pos
     this.itemType = itemType
-    this.size = { width: 20, height: 20 }
+    this.size = { width: 42, height: 42 }
     // this.color = "#FF0"
     this.glowColor = "#FF0"
     this.glows = true
@@ -30,16 +30,16 @@ export class Item extends GameObject implements IItem {
     switch (this.itemType) {
       case ItemType.Coin:
         this.img = images.find((i) => i.name === "coin.png")?.image || null
-        this.size = { width: 50, height: 50 }
         this.shape = Shape.Circle
         break
       case ItemType.Jetpack:
         this.img = images.find((i) => i.name === "jetpack.png")?.image || null
-        this.size = { width: 20, height: 20 }
         break
       case ItemType.Checkpoint:
         this.img = images.find((i) => i.name === "checkpoint.png")?.image || null
-        this.size = { width: 20, height: 20 }
+        break
+      case ItemType.AntiGravity:
+        this.img = images.find((i) => i.name === "antigravity.png")?.image || null
         break
       default:
         break
@@ -73,6 +73,12 @@ export class Item extends GameObject implements IItem {
         break
       case ItemType.Coin:
         object.addItem(this)
+        return true
+      case ItemType.AntiGravity:
+        object.gravityMultiplier -= 0.5
+        setTimeout(() => {
+          object.gravityMultiplier += 0.5
+        }, 8_000)
         return true
       default:
         break

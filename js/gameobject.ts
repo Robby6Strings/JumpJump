@@ -12,6 +12,7 @@ export class GameObject {
   maxSpeed: number = 12
   jumpPower: number = 20
   isJumping: boolean = false
+  gravityMultiplier: number = 1
   items: IItem[] = []
 
   size: { width: number; height: number } = { width: 0, height: 0 }
@@ -96,7 +97,7 @@ export class GameObject {
       this.isJumping = false
       return
     }
-    this.vel.y += constants.gravity
+    this.vel.y += constants.gravity * this.gravityMultiplier
   }
 
   applyVelocity() {
