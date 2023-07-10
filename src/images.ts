@@ -7,6 +7,7 @@ export const imageRefs = [
   { image: "portal2.png", speed: 0 },
   { image: "antigravity.png", speed: 0 },
   { image: "shop.png", speed: 0 },
+  { image: "snail.png", speed: 0 },
 ]
 
 export type GameImage = {

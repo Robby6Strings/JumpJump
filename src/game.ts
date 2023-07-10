@@ -1,9 +1,11 @@
 import { constants } from "./constants.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
-import { IItem, Item, Portal } from "./item.js"
+import { IItem, Item, Portal, Shop } from "./item.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
 import { ItemType } from "./enums.js"
+import { Ability } from "./ability.js"
+import { shopInventory } from "./state.js"
 
 export class Game {
   camera: Camera
@@ -80,7 +82,7 @@ export class Game {
         if (this.currentShop) {
           this.items.splice(this.items.indexOf(this.currentShop), 1)
         }
-        this.currentShop = new Item({ x, y: y - 48 }, ItemType.Shop)
+        this.currentShop = new Shop({ x, y: y - 48 })
         this.items.push(this.currentShop)
         didSpawnShop = true
         platforms.push(
@@ -146,5 +148,9 @@ export class Game {
 
   onShopContinueClick() {
     this.player.vel.y -= 50
+  }
+  onShopAbilityClick(ability: Ability) {
+    this.player.abilities.push(ability)
+    shopInventory.value = shopInventory.value.filter((a) => a !== ability)
   }
 }

@@ -161,3 +161,13 @@ export class Portal extends Item {
     console.log("new portal img", this.img, this.idx)
   }
 }
+
+export class Shop extends Item {
+  constructor(pos: Vec2) {
+    super(pos, ItemType.Shop)
+    this.size.width = 64
+    this.size.height = 64
+    this.glowColor = "#FF0"
+    this.setImg()
+  }
+}

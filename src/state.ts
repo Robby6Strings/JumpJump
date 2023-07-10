@@ -2,6 +2,7 @@ import { createSignal } from "cinnabun"
 import { constants } from "./constants"
 import { Game } from "./game"
 import { GameImage } from "./images"
+import { Ability } from "./ability"
 
 type HtmlElements = {
   canvas?: HTMLCanvasElement
@@ -34,6 +35,8 @@ export const isShopOpen = createSignal<boolean>(false)
 isShopOpen.subscribe((open) => {
   console.log("shop open", open)
 })
+
+export const shopInventory = createSignal<Ability[]>([])
 
 export const frameRef = createSignal<number | null>(null)
 export const images = createSignal<GameImage[]>([])

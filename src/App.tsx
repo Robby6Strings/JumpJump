@@ -10,7 +10,9 @@ import {
   game,
   images,
   isShopOpen,
+  shopInventory,
 } from "./state"
+import { Ability, AbilityType } from "./ability"
 
 export const App = () => {
   let canvasRef: HTMLCanvasElement | undefined = undefined
@@ -59,11 +61,17 @@ export const App = () => {
         bind:visible={() => isShopOpen.value}
       >
         <h1>Shop</h1>
+        <div watch={shopInventory} bind:children>
+          {() =>
+            shopInventory.value.map((ability) => (
+              <ShopAbilityButton ability={ability} />
+            ))
+          }
+        </div>
         <div style="margin-top:auto">
           <button
             onclick={() => {
               isShopOpen.value = false
-              console.log(game)
               game?.onShopContinueClick()
             }}
           >
@@ -72,6 +80,15 @@ export const App = () => {
         </div>
       </Transition>
     </div>
+  )
+}
+
+const ShopAbilityButton = ({ ability }: { ability: Ability }) => {
+  return (
+    <button onclick={() => game?.onShopAbilityClick(ability)}>
+      {ability.type}
+      <img src={ability.img.src} />
+    </button>
   )
 }
 
@@ -84,6 +101,8 @@ function main() {
 
   if (!ctx) throw new Error("Context not loaded")
   if (!bgCtx) throw new Error("Background context not loaded")
+
+  shopInventory.value = [new Ability(AbilityType.SlowMo)]
 
   bgPattern = bgCtx.createPattern(bgImage.value, "repeat")!
   bgCtx.fillStyle = bgPattern

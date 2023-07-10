@@ -1,3 +1,4 @@
+import { Ability } from "./ability.js"
 import { constants } from "./constants.js"
 import { GameObjectType, ItemType } from "./enums.js"
 import { GameObject } from "./gameobject.js"
@@ -12,6 +13,7 @@ type VelocityParticle = {
 
 export class Player extends GameObject {
   velocityParticles: VelocityParticle[] = []
+  abilities: Ability[] = []
 
   inputs = {
     left: false,
