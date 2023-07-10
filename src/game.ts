@@ -13,6 +13,7 @@ export class Game {
   items: Item[] = []
   maxSection: number
   isGameOver: boolean = false
+  currentShop: Item | null = null
   constructor() {
     this.player = new Player()
     this.platforms = [
@@ -75,8 +76,12 @@ export class Game {
         Math.random() * heightVariance -
         heightVariance / 2
 
-      if (!didSpawnShop && this.maxSection % 5 === 0) {
-        this.items.push(new Item({ x, y: y - 48 }, ItemType.Shop))
+      if (!didSpawnShop && this.maxSection % constants.shopDistance === 0) {
+        if (this.currentShop) {
+          this.items.splice(this.items.indexOf(this.currentShop), 1)
+        }
+        this.currentShop = new Item({ x, y: y - 48 }, ItemType.Shop)
+        this.items.push(this.currentShop)
         didSpawnShop = true
         platforms.push(
           Platform.randomPlatform({ x, y }, { height: 30, width: 160 }, true)
@@ -137,5 +142,9 @@ export class Game {
   handleCollisions() {
     this.player.handleCollisions(this.platforms)
     this.player.handleCollisions(this.items)
+  }
+
+  onShopContinueClick() {
+    this.player.vel.y -= 50
   }
 }

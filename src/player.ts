@@ -35,6 +35,9 @@ export class Player extends GameObject {
     this.glowColor = "#000A"
     this.glowSize = 3
     this.attachKeybinds()
+    for (let i = 0; i < 1000; i++) {
+      this.items.push(new Item({ x: 0, y: 0 }, ItemType.Coin))
+    }
   }
 
   get coins(): number {
@@ -54,7 +57,10 @@ export class Player extends GameObject {
     }
 
     if (this.vel.y < 0 && this.isJumping) {
-      this.size.width = Math.min(tempWidth, tempWidth - Math.abs(this.vel.y) / 1.5)
+      this.size.width = Math.min(
+        tempWidth,
+        tempWidth - Math.abs(this.vel.y) / 1.5
+      )
     } else {
       this.size.width = tempWidth
     }
@@ -74,7 +80,12 @@ export class Player extends GameObject {
     ctx.shadowBlur = 0
     this.velocityParticles.forEach((particle) => {
       ctx.fillStyle = particle.color
-      ctx.fillRect(particle.pos.x, particle.pos.y - yOffset, particle.size, particle.size)
+      ctx.fillRect(
+        particle.pos.x,
+        particle.pos.y - yOffset,
+        particle.size,
+        particle.size
+      )
     })
   }
 
@@ -102,7 +113,9 @@ export class Player extends GameObject {
     this.velocityParticles.forEach((particle) => {
       particle.size *= 0.9
     })
-    this.velocityParticles = this.velocityParticles.filter((particle) => particle.size > 0.5)
+    this.velocityParticles = this.velocityParticles.filter(
+      (particle) => particle.size > 0.5
+    )
   }
 
   handleInputs(): void {

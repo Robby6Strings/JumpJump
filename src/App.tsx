@@ -59,6 +59,17 @@ export const App = () => {
         bind:visible={() => isShopOpen.value}
       >
         <h1>Shop</h1>
+        <div style="margin-top:auto">
+          <button
+            onclick={() => {
+              isShopOpen.value = false
+              console.log(game)
+              game?.onShopContinueClick()
+            }}
+          >
+            Continue
+          </button>
+        </div>
       </Transition>
     </div>
   )
