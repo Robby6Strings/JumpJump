@@ -85,7 +85,10 @@ export const App = () => {
 
 const ShopAbilityButton = ({ ability }: { ability: Ability }) => {
   return (
-    <button onclick={() => game?.onShopAbilityClick(ability)}>
+    <button
+      className="shop-ability"
+      onclick={() => game?.onShopAbilityClick(ability)}
+    >
       {ability.type}
       <img src={ability.img.src} />
     </button>
