@@ -11,6 +11,7 @@ type PlatformConstructor = {
 export enum PlatformBehaviour {
   Bounce,
   SuperBounce,
+  MegaBounce,
   MovesX,
   MovesY,
 }
@@ -35,7 +36,10 @@ export class Platform extends GameObject {
     this.behaviours = behaviours
     this.glows = true
 
-    if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
+    if (this.hasBehaviour(PlatformBehaviour.MegaBounce)) {
+      this.color = "gold"
+      this.glowColor = "#FF0"
+    } else if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
       this.color = "#55F"
       this.glowColor = "#228"
     } else {
@@ -52,6 +56,9 @@ export class Platform extends GameObject {
     const behaviours = [PlatformBehaviour.Bounce]
     if (Math.random() > 0.95) {
       behaviours.push(PlatformBehaviour.SuperBounce)
+    }
+    if (Math.random() > 0.99) {
+      behaviours.push(PlatformBehaviour.MegaBounce)
     }
     if (Math.random() > 0.5) {
       behaviours.push(PlatformBehaviour.MovesX)
