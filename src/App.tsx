@@ -13,13 +13,14 @@ import {
 export const App = () => {
   let canvasRef: HTMLCanvasElement | undefined = undefined
   let bgCanvasRef: HTMLCanvasElement | undefined = undefined
+  let fgCanvasRef: HTMLCanvasElement | undefined = undefined
   const onCanvasRefSet = () => {
-    if (canvasRef && bgCanvasRef) {
+    if (canvasRef && bgCanvasRef && fgCanvasRef) {
       HtmlElements.value = {
         canvas: canvasRef,
         bgCanvas: bgCanvasRef,
+        fgCanvas: fgCanvasRef,
       }
-      console.log("Canvas loaded", HtmlElements.value)
       loadImages(() => {
         const bgImageData = images.value.find((i) => i.name === "space.png")
         if (!bgImageData) throw new Error("Background image not loaded")
@@ -42,6 +43,13 @@ export const App = () => {
       <canvas
         onMounted={(el) => {
           canvasRef = el.element as HTMLCanvasElement
+          onCanvasRefSet()
+        }}
+      />
+      <canvas
+        id="fg-canvas"
+        onMounted={(el) => {
+          fgCanvasRef = el.element as HTMLCanvasElement
           onCanvasRefSet()
         }}
       />

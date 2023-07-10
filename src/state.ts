@@ -8,6 +8,8 @@ type HtmlElements = {
   ctx?: CanvasRenderingContext2D
   bgCanvas?: HTMLCanvasElement
   bgCtx?: CanvasRenderingContext2D
+  fgCanvas?: HTMLCanvasElement
+  fgCtx?: CanvasRenderingContext2D
 }
 
 export const HtmlElements = createSignal<HtmlElements>({})
@@ -21,6 +23,11 @@ HtmlElements.subscribe((elements) => {
     elements.bgCanvas.width = constants.screenWidth
     elements.bgCanvas.height = constants.screenHeight
     elements.bgCtx = elements.bgCanvas.getContext("2d")!
+  }
+  if (elements.fgCanvas) {
+    elements.fgCanvas.width = constants.screenWidth
+    elements.fgCanvas.height = constants.screenHeight
+    elements.fgCtx = elements.fgCanvas.getContext("2d")!
   }
 })
 
