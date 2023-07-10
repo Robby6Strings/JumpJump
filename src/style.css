@@ -39,24 +39,41 @@ body {
   align-items: center;
 }
 
+.shop-inventory {
+  display: grid;
+  gap: .5rem;
+  align-items: center;
+  justify-content: center;
+}
 
 .shop-ability {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
   padding: 0.5rem;
   background: rgba(255, 255, 255, .1);
   align-items: center;
   border: 0;
-  color: #fff;
+  color: #ddd;
   transition: all .2s ease-in-out;
   border-radius: .5rem;
 }
 .shop-ability:hover {
   background: rgba(255, 255, 255, .2);
   cursor: pointer;
+  color: #fff;
+}
+
+.shop-ability-title {
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .shop-ability img {
   max-width: 30px;
+}
+
+.shop-ability-price {
+  color: #ddb500;
+  font-weight: bold;
 }

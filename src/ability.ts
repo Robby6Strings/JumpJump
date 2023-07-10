@@ -7,7 +7,8 @@ export enum AbilityType {
 
 export class Ability {
   img: HTMLImageElement
-  constructor(public type: AbilityType) {
+
+  constructor(public type: AbilityType, public price: number = 100) {
     switch (type) {
       case AbilityType.SlowMo:
         this.img = images.value.find((i) => i.name === "snail.png")!.image

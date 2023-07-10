@@ -61,7 +61,7 @@ export const App = () => {
         bind:visible={() => isShopOpen.value}
       >
         <h1>Shop</h1>
-        <div watch={shopInventory} bind:children>
+        <div className="shop-inventory" watch={shopInventory} bind:children>
           {() =>
             shopInventory.value.map((ability) => (
               <ShopAbilityButton ability={ability} />
@@ -89,8 +89,9 @@ const ShopAbilityButton = ({ ability }: { ability: Ability }) => {
       className="shop-ability"
       onclick={() => game?.onShopAbilityClick(ability)}
     >
-      {ability.type}
+      <span className="shop-ability-title">{ability.type}</span>
       <img src={ability.img.src} />
+      <span className="shop-ability-price">{ability.price}</span>
     </button>
   )
 }
