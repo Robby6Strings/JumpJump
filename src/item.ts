@@ -1,8 +1,8 @@
-import { constants } from "./constants.js"
-import { GameObjectType, ItemType, Shape } from "./enums.js"
-import { GameObject } from "./gameobject.js"
-import { getImages } from "./images.js"
-import { Vec2 } from "./v2.js"
+import { constants } from "./constants"
+import { GameObjectType, ItemType, Shape } from "./enums"
+import { GameObject } from "./gameobject"
+import { Vec2 } from "./v2"
+import { images } from "./state"
 
 export interface IItem {
   itemType: ItemType
@@ -26,20 +26,28 @@ export class Item extends GameObject implements IItem {
   }
 
   setImg() {
-    const images = getImages()
     switch (this.itemType) {
       case ItemType.Coin:
-        this.img = images.find((i) => i.name === "coin.png")?.image || null
+        this.img =
+          images.value.find((i) => i.name === "coin.png")?.image || null
         this.shape = Shape.Circle
         break
       case ItemType.Jetpack:
-        this.img = images.find((i) => i.name === "jetpack.png")?.image || null
+        this.img =
+          images.value.find((i) => i.name === "jetpack.png")?.image || null
         break
       case ItemType.Checkpoint:
-        this.img = images.find((i) => i.name === "checkpoint.png")?.image || null
+        this.img =
+          images.value.find((i) => i.name === "checkpoint.png")?.image || null
         break
       case ItemType.AntiGravity:
-        this.img = images.find((i) => i.name === "antigravity.png")?.image || null
+        this.img =
+          images.value.find((i) => i.name === "antigravity.png")?.image || null
+        break
+      case ItemType.Shop:
+        this.img =
+          images.value.find((i) => i.name === "shop.png")?.image || null
+        this.size = { width: 64, height: 64 }
         break
       default:
         break
@@ -67,7 +75,8 @@ export class Item extends GameObject implements IItem {
           object.pos.x = this.otherPortal.pos.x
           object.pos.y = this.otherPortal.pos.y
           setTimeout(() => {
-            if (this instanceof Portal && this.otherPortal) this.otherPortal.isColliding = false
+            if (this instanceof Portal && this.otherPortal)
+              this.otherPortal.isColliding = false
           }, 100)
         }
         break
@@ -80,6 +89,8 @@ export class Item extends GameObject implements IItem {
           object.gravityMultiplier += 0.5
         }, 8_000)
         return true
+      case ItemType.Shop:
+        break
       default:
         break
     }
@@ -116,7 +127,9 @@ export class Portal extends Item {
 
     const nextAbove = Math.random() > 0.5
 
-    const y2 = nextAbove ? pos1.y - 100 - Math.random() * 300 : pos1.y + 100 + Math.random() * 300
+    const y2 = nextAbove
+      ? pos1.y - 100 - Math.random() * 300
+      : pos1.y + 100 + Math.random() * 300
 
     const pos2 = {
       x:
@@ -134,9 +147,10 @@ export class Portal extends Item {
   }
 
   setImg(): void {
-    const images = getImages()
     this.img =
-      images.find((i) => i.name === `portal${this.idx === 0 ? "2" : ""}.png`)?.image || null
+      images.value.find(
+        (i) => i.name === `portal${this.idx === 0 ? "2" : ""}.png`
+      )?.image || null
     console.log("new portal img", this.img, this.idx)
   }
 }
