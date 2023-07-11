@@ -37,19 +37,18 @@ export class Platform extends GameObject {
     this.canLeaveMap = true
     this.behaviours = behaviours
     this.glows = true
+    this.glowSize = 3
+    this.glowColor = "#000A"
 
     if (this.hasBehaviour(PlatformBehaviour.MegaBounce)) {
       this.color = "gold"
-      this.glowColor = "#FF0"
+      this.glowColor = "#FF0A"
     } else if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
       this.color = "#55F"
-      this.glowColor = "#228"
+      this.glowColor = "#228C"
     } else if (this.hasBehaviour(PlatformBehaviour.DestroyOnTouch)) {
       this.color = "#66A8"
       this.glows = false
-    } else {
-      this.glowSize = 3
-      this.glowColor = "#000A"
     }
   }
 
