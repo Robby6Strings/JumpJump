@@ -159,16 +159,13 @@ export class Game {
         }
       }
 
-      // chance to spawn a portal pair in the next section
       platforms.push(Platform.randomPlatform({ x, y }))
     }
 
     //portal pair
     if (this.maxSection % 4 === 0 && this.maxSection > 60) {
       if (Math.random() > 0.9) {
-        const y =
-          constants.sectionHeight -
-          (this.maxSection + 1) * constants.sectionHeight
+        const y = -(this.maxSection + 1) * constants.sectionHeight
         this.items.push(...Portal.createPair(y))
       }
     }

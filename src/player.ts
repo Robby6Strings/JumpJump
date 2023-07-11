@@ -70,7 +70,7 @@ export class Player extends GameObject {
     super.tick()
     if (this.abilities.length > 0) {
       if (this.vel.y < 0) {
-        this.abilityJuice += -this.vel.y / 33
+        this.abilityJuice += -this.vel.y / 42
         if (this.abilityJuice > this.maxAbilityJuice) {
           this.abilityJuice = this.maxAbilityJuice
         }
