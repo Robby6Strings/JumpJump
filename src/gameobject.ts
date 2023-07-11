@@ -10,7 +10,8 @@ export class GameObject {
   pos: Vec2 = { x: 0, y: 0 }
   vel: Vec2 = { x: 0, y: 0 }
   speed: number = 3
-  maxSpeed: number = 12
+  maxSpeedX: number = 12
+  maxSpeedY: number = 100
   jumpPower: number = 20
   isJumping: boolean = false
   hasJumpBoost: boolean = false
@@ -112,8 +113,10 @@ export class GameObject {
 
   applyVelocity() {
     if (this.isStatic) return
-    if (this.vel.x > this.maxSpeed) this.vel.x = this.maxSpeed
-    if (this.vel.x < -this.maxSpeed) this.vel.x = -this.maxSpeed
+    if (this.vel.x > this.maxSpeedX) this.vel.x = this.maxSpeedX
+    if (this.vel.x < -this.maxSpeedX) this.vel.x = -this.maxSpeedX
+    if (this.vel.y > this.maxSpeedY) this.vel.y = this.maxSpeedY
+    if (this.vel.y < -this.maxSpeedY) this.vel.y = -this.maxSpeedY
     this.pos.x += this.vel.x * GameObject.speedMultiplier
     this.pos.y += this.vel.y * GameObject.speedMultiplier
     if (!this.canLeaveMap) {

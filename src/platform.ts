@@ -87,7 +87,7 @@ export class Platform extends GameObject {
 
   moveX() {
     this.vel.x = this.moveSpeed * this.moveDirectionX
-    this.pos.x += this.vel.x
+    this.pos.x += this.vel.x * GameObject.speedMultiplier
     this.moveDistanceTravelledX += this.moveSpeed
     if (this.moveDistanceTravelledX >= this.moveDistanceX) {
       this.moveDirectionX *= -1
@@ -97,7 +97,7 @@ export class Platform extends GameObject {
 
   moveY() {
     this.vel.y = this.moveSpeed * this.moveDirectionY
-    this.pos.y += this.vel.y
+    this.pos.y += this.vel.y * GameObject.speedMultiplier
     this.moveDistanceTravelledY += this.moveSpeed
     if (this.moveDistanceTravelledY >= this.moveDistanceY) {
       this.moveDirectionY *= -1
