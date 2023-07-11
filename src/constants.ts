@@ -4,5 +4,5 @@ export const constants = {
   sectionHeight: 450,
   gravity: 1.25,
   friction: 0.5,
-  shopDistance: 5,
+  shopDistance: 50,
 }

@@ -74,9 +74,9 @@ export class Game {
       )
       if (
         dist > constants.screenHeight / 2 &&
-        dist < constants.screenHeight * 2
+        dist < constants.screenHeight * 3
       ) {
-        const x = this.currentShop.pos.x
+        const x = this.currentShop.pos.x - this.currentShop.halfSize.width
         const y =
           this.camera.offsetY > this.currentShop.pos.y
             ? 0
