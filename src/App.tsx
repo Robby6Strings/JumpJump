@@ -13,6 +13,7 @@ import {
   shopInventory,
 } from "./state"
 import { Ability, AbilityType } from "./ability"
+import { GameObject } from "./gameobject"
 
 export const App = () => {
   let canvasRef: HTMLCanvasElement | undefined = undefined
@@ -125,6 +126,16 @@ function main() {
 }
 
 let lastDistance = 0
+
+function shouldDraw(object: GameObject) {
+  return (
+    object.pos.y + object.size.height >
+      game!.camera.offsetY - constants.screenHeight &&
+    object.pos.y + object.size.height <
+      game!.camera.offsetY + constants.screenHeight * 2
+  )
+}
+
 function loop() {
   let ctx = HtmlElements.value.ctx
   let bgCtx = HtmlElements.value.bgCtx
@@ -133,9 +144,11 @@ function loop() {
 
   game.tick()
   for (const platform of game.platforms) {
+    if (!shouldDraw(platform)) continue
     platform.draw(ctx, game.camera.offsetY)
   }
   for (const item of game.items) {
+    if (!shouldDraw(item)) continue
     item.draw(ctx, game.camera.offsetY)
   }
   game.player.draw(ctx, game.camera.offsetY)
