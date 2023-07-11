@@ -168,6 +168,5 @@ export class Shop extends Item {
     this.size.width = 64
     this.size.height = 64
     this.glowColor = "#FF0"
-    this.setImg()
   }
 }

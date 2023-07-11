@@ -12,6 +12,7 @@ export enum PlatformBehaviour {
   Bounce,
   SuperBounce,
   MegaBounce,
+  JumpBoost,
   MovesX,
   MovesY,
 }
@@ -54,11 +55,12 @@ export class Platform extends GameObject {
       width: Math.random() * 100 + 50,
       height: Math.random() * 10 + 20,
     },
-    isStatic: boolean = false
+    behaviours: PlatformBehaviour[] = []
   ): Platform {
-    if (isStatic) return new Platform({ pos, size, behaviours: [] })
+    if (behaviours.length > 0) return new Platform({ pos, size, behaviours })
 
-    const behaviours: PlatformBehaviour[] = [PlatformBehaviour.Bounce]
+    behaviours.push(PlatformBehaviour.Bounce)
+
     if (Math.random() > 0.95) {
       behaviours.push(PlatformBehaviour.SuperBounce)
     }

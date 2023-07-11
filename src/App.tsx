@@ -68,16 +68,6 @@ export const App = () => {
             ))
           }
         </div>
-        <div style="margin-top:auto">
-          <button
-            onclick={() => {
-              isShopOpen.value = false
-              game?.onShopContinueClick()
-            }}
-          >
-            Continue
-          </button>
-        </div>
       </Transition>
     </div>
   )
@@ -91,7 +81,7 @@ const ShopAbilityButton = ({ ability }: { ability: Ability }) => {
     >
       <span className="shop-ability-title">{ability.type}</span>
       <img src={ability.img.src} />
-      <span className="shop-ability-price">{ability.price}</span>
+      <small className="shop-ability-price">{ability.price}</small>
     </button>
   )
 }

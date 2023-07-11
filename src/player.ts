@@ -51,20 +51,12 @@ export class Player extends GameObject {
   }
 
   tick(): void {
-    let tempWidth = 50
-    const absVelX = Math.abs(this.vel.x)
-    if (absVelX > 0) {
-      this.size.height = Math.min(50, 50 - Math.abs(this.vel.x) / 2)
-      tempWidth = tempWidth + (50 - this.size.height)
-    }
+    if (!this.isColliding) this.hasJumpBoost = false
 
     if (this.vel.y < 0 && this.isJumping) {
-      this.size.width = Math.min(
-        tempWidth,
-        tempWidth - Math.abs(this.vel.y) / 1.5
-      )
+      this.size.width = Math.min(50, 50 - Math.abs(this.vel.y) / 1.5)
     } else {
-      this.size.width = tempWidth
+      this.size.width = 50
     }
 
     this.emitVelocityParticles()
@@ -129,7 +121,7 @@ export class Player extends GameObject {
     }
     if (this.inputs.up && !this.isJumping) {
       if (this.vel.y > 0) this.vel.y = 0
-      this.vel.y -= this.jumpPower
+      this.vel.y -= this.jumpPower * (this.hasJumpBoost ? 2 : 1)
       this.isJumping = true
     }
   }

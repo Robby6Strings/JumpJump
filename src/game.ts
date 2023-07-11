@@ -43,7 +43,6 @@ export class Game {
   }
 
   tick() {
-    this.handleCollisions()
     for (const platform of this.platforms) {
       platform.tick()
     }
@@ -52,6 +51,8 @@ export class Game {
     }
     this.player.tick()
     this.camera.tick()
+    this.handleCollisions()
+
     this.score = 0
     this.score = Math.floor(
       Math.abs(
@@ -70,15 +71,19 @@ export class Game {
     let didSpawnShop = false
 
     for (let i = 0; i < platformCount; i++) {
+      const spawnShop =
+        !didSpawnShop && this.maxSection % constants.shopDistance === 0
+
       const heightVariance = 100
       const x = Math.random() * (i + 1) * areaWidth
-      const y =
-        constants.sectionHeight -
-        this.maxSection * constants.sectionHeight +
-        Math.random() * heightVariance -
-        heightVariance / 2
+      const y = spawnShop
+        ? constants.sectionHeight - this.maxSection * constants.sectionHeight
+        : constants.sectionHeight -
+          this.maxSection * constants.sectionHeight +
+          Math.random() * heightVariance -
+          heightVariance / 2
 
-      if (!didSpawnShop && this.maxSection % constants.shopDistance === 0) {
+      if (spawnShop) {
         if (this.currentShop) {
           this.items.splice(this.items.indexOf(this.currentShop), 1)
         }
@@ -86,7 +91,9 @@ export class Game {
         this.items.push(this.currentShop)
         didSpawnShop = true
         platforms.push(
-          Platform.randomPlatform({ x, y }, { height: 30, width: 160 }, true)
+          Platform.randomPlatform({ x, y }, { height: 30, width: 160 }, [
+            PlatformBehaviour.JumpBoost,
+          ])
         )
         break
       }
@@ -142,8 +149,7 @@ export class Game {
   }
 
   handleCollisions() {
-    this.player.handleCollisions(this.platforms)
-    this.player.handleCollisions(this.items)
+    this.player.handleCollisions([...this.platforms, ...this.items])
   }
 
   onShopContinueClick() {

@@ -12,6 +12,7 @@ export class GameObject {
   maxSpeed: number = 12
   jumpPower: number = 20
   isJumping: boolean = false
+  hasJumpBoost: boolean = false
   gravityMultiplier: number = 1
   items: IItem[] = []
 
@@ -131,14 +132,16 @@ export class GameObject {
     this.isColliding = false
 
     for (const object of objects) {
-      object.isColliding = false
       if (object === this) continue
+      object.isColliding = false
       if (!object.isCollidable) continue
       if (!this.isCollidingWith(object)) continue
       this.isColliding = true
+      console.log("colliding")
       object.isColliding = true
       this.handleCollision(object)
     }
+    if (!this.isColliding) console.log("not colliding")
   }
 
   handleCollision(object: GameObject) {
@@ -167,27 +170,23 @@ export class GameObject {
   }
 
   handlePlatformCollision(platform: Platform) {
-    if (this.isStatic || !this.isCollidable) return
-    if (
-      this.pos.y + this.halfSize.height - this.vel.y <=
-      platform.pos.y + platform.halfSize.height
-    ) {
-      if (this.vel.y >= 0) {
-        this.pos.y =
-          platform.pos.y - platform.halfSize.height - this.halfSize.height
-        this.vel.y = 0
-        this.isJumping = false
-        if (platform.hasBehaviour(PlatformBehaviour.MegaBounce)) {
-          this.vel.y = -(this.jumpPower * 5)
-        } else if (platform.hasBehaviour(PlatformBehaviour.SuperBounce)) {
-          this.vel.y = -(this.jumpPower * 1.5)
-        } else if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
-          this.vel.y = -(this.jumpPower * 0.75)
-        }
+    if (platform.hasBehaviour(PlatformBehaviour.JumpBoost)) {
+      this.hasJumpBoost = true
+    }
+    const playerBottom = this.pos.y + this.halfSize.height - this.vel.y
+    const platformTop = platform.pos.y - platform.halfSize.height
+    if (this.vel.y >= 0 && playerBottom <= platformTop) {
+      this.pos.y =
+        platform.pos.y - platform.halfSize.height - this.halfSize.height + 0.5
+      this.vel.y = 0
+      this.isJumping = false
+      if (platform.hasBehaviour(PlatformBehaviour.MegaBounce)) {
+        this.vel.y = -(this.jumpPower * 5)
+      } else if (platform.hasBehaviour(PlatformBehaviour.SuperBounce)) {
+        this.vel.y = -(this.jumpPower * 1.5)
+      } else if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
+        this.vel.y = -(this.jumpPower * 0.75)
       }
-    } else if (this.pos.y > platform.pos.y + platform.halfSize.height) {
-      // this.pos.y = platform.pos.y + platform.halfSize.height + this.halfSize.height
-      // this.vel.y = (this.vel.y * -1) / 2
     }
   }
 
