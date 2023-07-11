@@ -190,8 +190,8 @@ export class Game {
   }
   onShopAbilityClick(ability: Ability) {
     this.player.abilities.push(ability)
-    if (!this.player.selectedAbility) {
-      this.player.selectedAbility = ability
+    if (this.player.selectedAbilityIndex === -1) {
+      this.player.selectedAbilityIndex = 0
     }
     shopInventory.value = shopInventory.value.filter((a) => a !== ability)
 

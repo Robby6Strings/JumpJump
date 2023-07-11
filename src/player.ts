@@ -20,7 +20,7 @@ export class Player extends GameObject {
   abilityJuiceCost: number = 100
   abilityJuice: number = 0
   maxAbilityJuice: number = 300
-  selectedAbility: Ability | null = null
+  selectedAbilityIndex: number = -1
 
   inputs = {
     left: false,
@@ -96,6 +96,7 @@ export class Player extends GameObject {
     super.draw(ctx, yOffset)
     if (this.abilities.length > 0) {
       this.renderAbilityJuiceBar(ctx)
+      this.renderAbilities(ctx)
     }
   }
 
@@ -128,6 +129,33 @@ export class Player extends GameObject {
       ctx.fillRect(barX, y, barWidth, separatorHeight)
     }
   }
+  renderAbilities(ctx: CanvasRenderingContext2D): void {
+    const abilitySize = 50
+    const padding = 10
+    const x = constants.screenWidth - abilitySize - padding - 30
+    const y = constants.screenHeight - abilitySize - padding
+    this.abilities.forEach((ability, i) => {
+      const isSelected = i === this.selectedAbilityIndex
+      ctx.beginPath()
+      ctx.fillStyle = isSelected ? "#0004" : "transparent"
+      ctx.roundRect(x - i * abilitySize, y, abilitySize, abilitySize, 5)
+      ctx.fill()
+      ctx.strokeStyle = isSelected ? "#fff" : "#0004"
+      ctx.lineWidth = 2
+      ctx.stroke()
+      ctx.closePath()
+
+      const padding = 5
+
+      ctx.drawImage(
+        ability.img,
+        x + padding - i * abilitySize,
+        y + padding,
+        abilitySize - padding * 2,
+        abilitySize - padding * 2
+      )
+    })
+  }
 
   drawVelocityParticles(ctx: CanvasRenderingContext2D, yOffset: number): void {
     if (this.velocityParticles.length === 0) return
@@ -135,7 +163,7 @@ export class Player extends GameObject {
     this.velocityParticles.forEach((particle) => {
       ctx.fillStyle = particle.color
       ctx.fillRect(
-        particle.pos.x,
+        particle.pos.x - particle.size / 2,
         particle.pos.y - yOffset,
         particle.size,
         particle.size
@@ -207,13 +235,28 @@ export class Player extends GameObject {
           break
       }
     })
+    window.addEventListener("wheel", (e) => {
+      if (this.abilities.length > 1) {
+        if (e.deltaY > 0) {
+          this.selectedAbilityIndex++
+          if (this.selectedAbilityIndex >= this.abilities.length) {
+            this.selectedAbilityIndex = 0
+          }
+        } else {
+          this.selectedAbilityIndex--
+          if (this.selectedAbilityIndex < 0) {
+            this.selectedAbilityIndex = this.abilities.length - 1
+          }
+        }
+      }
+    })
 
     window.addEventListener("keypress", (e) => {
       switch (e.key.toLowerCase()) {
         case " ":
           if (this.abilities.length > 0) {
             if (this.abilityJuice >= this.abilityJuiceCost) {
-              this.selectedAbility?.use(this)
+              this.abilities[this.selectedAbilityIndex]?.use(this)
               this.abilityJuice -= this.abilityJuiceCost
             }
           }
