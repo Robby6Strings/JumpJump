@@ -78,6 +78,7 @@ export class Game {
         dist > constants.screenHeight / 2 &&
         dist < constants.screenHeight * 3
       ) {
+        //get the middle between 'this.currentShop.pos.x' and 'this.player.pos.x'
         const x = this.currentShop.pos.x - this.currentShop.halfSize.width
         const y =
           this.camera.offsetY > this.currentShop.pos.y
@@ -120,11 +121,15 @@ export class Game {
         if (this.currentShop) {
           this.items.splice(this.items.indexOf(this.currentShop), 1)
         }
-        this.currentShop = new Shop({ x, y: y - 48 })
+        let shopX = Math.random() * constants.screenWidth
+        this.currentShop = new Shop({
+          x: shopX,
+          y: y - 48,
+        })
         this.items.push(this.currentShop)
         didSpawnShop = true
         platforms.push(
-          Platform.randomPlatform({ x, y }, { height: 30, width: 160 }, [
+          Platform.randomPlatform({ x: shopX, y }, { height: 30, width: 160 }, [
             PlatformBehaviour.JumpBoost,
           ])
         )
