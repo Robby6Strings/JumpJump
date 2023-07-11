@@ -1,3 +1,4 @@
+import { Signal } from "cinnabun"
 import { constants } from "./constants.js"
 import { GameObjectType, Shape } from "./enums.js"
 import { IItem, Item } from "./item.js"
@@ -14,7 +15,7 @@ export class GameObject {
   isJumping: boolean = false
   hasJumpBoost: boolean = false
   gravityMultiplier: number = 1
-  items: IItem[] = []
+  items: Signal<IItem[]> = new Signal([] as IItem[])
 
   size: { width: number; height: number } = { width: 0, height: 0 }
   get halfSize() {
@@ -137,11 +138,9 @@ export class GameObject {
       if (!object.isCollidable) continue
       if (!this.isCollidingWith(object)) continue
       this.isColliding = true
-      console.log("colliding")
       object.isColliding = true
       this.handleCollision(object)
     }
-    if (!this.isColliding) console.log("not colliding")
   }
 
   handleCollision(object: GameObject) {
@@ -166,7 +165,8 @@ export class GameObject {
   }
 
   addItem(item: IItem) {
-    this.items.push(item)
+    this.items.value.push(item)
+    this.items.notify()
   }
 
   handlePlatformCollision(platform: Platform) {
@@ -175,9 +175,18 @@ export class GameObject {
     }
     const playerBottom = this.pos.y + this.halfSize.height - this.vel.y
     const platformTop = platform.pos.y - platform.halfSize.height
-    if (this.vel.y >= 0 && playerBottom <= platformTop) {
+    const magicNumberForPersistentCollisions = 0.5
+
+    if (
+      this.vel.y >= 0 &&
+      playerBottom - magicNumberForPersistentCollisions <= platformTop
+    ) {
       this.pos.y =
-        platform.pos.y - platform.halfSize.height - this.halfSize.height + 0.5
+        platform.pos.y -
+        platform.halfSize.height -
+        this.halfSize.height +
+        magicNumberForPersistentCollisions
+
       this.vel.y = 0
       this.isJumping = false
       if (platform.hasBehaviour(PlatformBehaviour.MegaBounce)) {

@@ -43,6 +43,7 @@ export class Game {
   }
 
   tick() {
+    this.handleCollisions()
     for (const platform of this.platforms) {
       platform.tick()
     }
@@ -51,7 +52,6 @@ export class Game {
     }
     this.player.tick()
     this.camera.tick()
-    this.handleCollisions()
 
     this.score = 0
     this.score = Math.floor(
@@ -157,6 +157,10 @@ export class Game {
   }
   onShopAbilityClick(ability: Ability) {
     this.player.abilities.push(ability)
+
     shopInventory.value = shopInventory.value.filter((a) => a !== ability)
+
+    this.player.coins.value.splice(0, ability.price)
+    this.player.coins.notify()
   }
 }

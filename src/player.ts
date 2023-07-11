@@ -1,8 +1,9 @@
+import { Signal } from "cinnabun"
 import { Ability } from "./ability.js"
 import { constants } from "./constants.js"
 import { GameObjectType, ItemType } from "./enums.js"
 import { GameObject } from "./gameobject.js"
-import { Item } from "./item.js"
+import { IItem, Item } from "./item.js"
 import { Vec2 } from "./v2.js"
 
 type VelocityParticle = {
@@ -14,6 +15,7 @@ type VelocityParticle = {
 export class Player extends GameObject {
   velocityParticles: VelocityParticle[] = []
   abilities: Ability[] = []
+  coins: Signal<IItem[]> = new Signal([] as IItem[])
 
   inputs = {
     left: false,
@@ -37,13 +39,13 @@ export class Player extends GameObject {
     this.glowColor = "#000A"
     this.glowSize = 3
     this.attachKeybinds()
-    for (let i = 0; i < 1000; i++) {
-      this.items.push(new Item({ x: 0, y: 0 }, ItemType.Coin))
+    for (let i = 0; i < 10; i++) {
+      this.addItem(new Item({ x: 0, y: 0 }, ItemType.Coin))
     }
   }
 
-  get coins(): number {
-    return this.items.filter((i) => i.itemType === ItemType.Coin).length
+  get numCoins(): number {
+    return this.coins.value.length
   }
 
   get distanceFromGround(): number {
@@ -62,6 +64,19 @@ export class Player extends GameObject {
     this.emitVelocityParticles()
     this.handleInputs()
     super.tick()
+  }
+
+  addItem(item: IItem) {
+    switch (item.itemType) {
+      case ItemType.Coin:
+        this.coins.value.push(item)
+        this.coins.notify()
+        break
+      default:
+        this.items.value.push(item)
+        this.items.notify()
+        break
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number): void {

@@ -63,9 +63,13 @@ export const App = () => {
         <h1>Shop</h1>
         <div className="shop-inventory" watch={shopInventory} bind:children>
           {() =>
-            shopInventory.value.map((ability) => (
-              <ShopAbilityButton ability={ability} />
-            ))
+            shopInventory.value.length > 0 ? (
+              shopInventory.value.map((ability) => (
+                <ShopAbilityButton ability={ability} />
+              ))
+            ) : (
+              <i>All abilities purchased</i>
+            )
           }
         </div>
       </Transition>
@@ -74,10 +78,16 @@ export const App = () => {
 }
 
 const ShopAbilityButton = ({ ability }: { ability: Ability }) => {
+  const player = game!.player
   return (
     <button
       className="shop-ability"
-      onclick={() => game?.onShopAbilityClick(ability)}
+      onclick={() => game!.onShopAbilityClick(ability)}
+      watch={player.items}
+      bind:disabled={() => player.numCoins < ability.price}
+      bind:title={() =>
+        player.numCoins >= ability.price ? "" : "Not enough coins"
+      }
     >
       <span className="shop-ability-title">{ability.type}</span>
       <img src={ability.img.src} />
@@ -144,7 +154,7 @@ function loop() {
   ctx.fillText(`Height: ${game.score}`, 10, 20)
 
   // render coins
-  ctx.fillText(`Coins: ${game.player.coins}`, 10, 40)
+  ctx.fillText(`Coins: ${game.player.numCoins}`, 10, 40)
 
   frameRef.value = requestAnimationFrame(loop)
 }
