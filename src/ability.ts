@@ -1,8 +1,10 @@
+import { GameObject } from "./gameobject"
 import { images } from "./state"
 import { Vec2 } from "./v2"
 
 export enum AbilityType {
   SlowMo = "SlowMo",
+  DoubleJump = "DoubleJump",
 }
 
 export class Ability {
@@ -12,6 +14,9 @@ export class Ability {
     switch (type) {
       case AbilityType.SlowMo:
         this.img = images.value.find((i) => i.name === "snail.png")!.image
+        break
+      case AbilityType.DoubleJump:
+        this.img = images.value.find((i) => i.name === "boot.png")!.image
         break
       default:
         break

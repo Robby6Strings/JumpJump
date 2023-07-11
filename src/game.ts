@@ -188,7 +188,6 @@ export class Game {
   }
   onShopAbilityClick(ability: Ability) {
     this.player.abilities.push(ability)
-
     shopInventory.value = shopInventory.value.filter((a) => a !== ability)
 
     this.player.coins.value.splice(0, ability.price)
