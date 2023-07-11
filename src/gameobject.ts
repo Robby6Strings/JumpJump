@@ -250,4 +250,11 @@ export class GameObject {
       this.pos.y - this.halfSize.height < object.pos.y + object.halfSize.height
     )
   }
+
+  distanceTo(object: GameObject) {
+    return Math.sqrt(
+      Math.pow(object.pos.x - this.pos.x, 2) +
+        Math.pow(object.pos.y - this.pos.y, 2)
+    )
+  }
 }

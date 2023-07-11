@@ -137,6 +137,12 @@ function loop() {
   }
   game.player.draw(ctx, game.camera.offsetY)
 
+  if (game.directionIndicator && game.directionIndicatorIcon) {
+    const x = game.directionIndicator.x
+    const y = game.directionIndicator.y
+    ctx.drawImage(game.directionIndicatorIcon, x, y, 50, 50)
+  }
+
   const distanceDif = -game.camera.offsetY - lastDistance
   lastDistance = -game.camera.offsetY
   const yTranslate = Math.round(distanceDif * bgImageSpeed.value)

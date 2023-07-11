@@ -6,6 +6,7 @@ import { Camera } from "./camera.js"
 import { ItemType } from "./enums.js"
 import { Ability } from "./ability.js"
 import { shopInventory } from "./state.js"
+import { Vec2 } from "./v2.js"
 
 export class Game {
   camera: Camera
@@ -16,6 +17,8 @@ export class Game {
   maxSection: number
   isGameOver: boolean = false
   currentShop: Item | null = null
+  directionIndicator: Vec2 | null = null
+  directionIndicatorIcon: HTMLImageElement | null = null
   constructor() {
     this.player = new Player()
     this.platforms = [
@@ -61,6 +64,34 @@ export class Game {
     )
     this.section =
       Math.abs(Math.floor(this.player.pos.y / constants.sectionHeight)) + 1
+
+    if (this.currentShop) {
+      // check if the shop is in view, based on the camera offset
+      const dist = Math.abs(
+        this.currentShop.pos.y -
+          this.camera.offsetY -
+          constants.screenHeight / 2
+      )
+      if (
+        dist > constants.screenHeight / 2 &&
+        dist < constants.screenHeight * 2
+      ) {
+        const x = this.currentShop.pos.x
+        const y =
+          this.camera.offsetY > this.currentShop.pos.y
+            ? 0
+            : constants.screenHeight
+
+        this.directionIndicator = { x, y }
+        this.directionIndicatorIcon = this.currentShop.img
+      } else {
+        this.directionIndicator = null
+        this.directionIndicatorIcon = null
+      }
+    } else {
+      this.directionIndicator = null
+      this.directionIndicatorIcon = null
+    }
   }
 
   generateNextSection() {
