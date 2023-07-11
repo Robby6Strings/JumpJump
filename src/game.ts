@@ -19,6 +19,8 @@ export class Game {
   currentShop: Item | null = null
   directionIndicator: Vec2 | null = null
   directionIndicatorIcon: HTMLImageElement | null = null
+  speedMultiplier: number = 1
+
   constructor() {
     this.player = new Player()
     this.platforms = [
@@ -188,6 +190,9 @@ export class Game {
   }
   onShopAbilityClick(ability: Ability) {
     this.player.abilities.push(ability)
+    if (!this.player.selectedAbility) {
+      this.player.selectedAbility = ability
+    }
     shopInventory.value = shopInventory.value.filter((a) => a !== ability)
 
     this.player.coins.value.splice(0, ability.price)

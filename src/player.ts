@@ -17,12 +17,16 @@ export class Player extends GameObject {
   abilities: Ability[] = []
   coins: Signal<IItem[]> = new Signal([] as IItem[])
 
+  abilityJuiceCost: number = 100
+  abilityJuice: number = 0
+  maxAbilityJuice: number = 300
+  selectedAbility: Ability | null = null
+
   inputs = {
     left: false,
     right: false,
     up: false,
     down: false,
-    space: false,
   }
 
   constructor() {
@@ -39,7 +43,7 @@ export class Player extends GameObject {
     this.glowColor = "#000A"
     this.glowSize = 3
     this.attachKeybinds()
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 100; i++) {
       this.addItem(new Item({ x: 0, y: 0 }, ItemType.Coin))
     }
   }
@@ -64,6 +68,14 @@ export class Player extends GameObject {
     this.emitVelocityParticles()
     this.handleInputs()
     super.tick()
+    if (this.abilities.length > 0) {
+      if (this.vel.y < 0) {
+        this.abilityJuice += -this.vel.y / 33
+        if (this.abilityJuice > this.maxAbilityJuice) {
+          this.abilityJuice = this.maxAbilityJuice
+        }
+      }
+    }
   }
 
   addItem(item: IItem) {
@@ -82,6 +94,39 @@ export class Player extends GameObject {
   draw(ctx: CanvasRenderingContext2D, yOffset: number): void {
     this.drawVelocityParticles(ctx, yOffset)
     super.draw(ctx, yOffset)
+    if (this.abilities.length > 0) {
+      this.renderAbilityJuiceBar(ctx)
+    }
+  }
+
+  renderAbilityJuiceBar(ctx: CanvasRenderingContext2D): void {
+    // render a vertical bar that shows how much ability juice the player has
+    // with a section that shows how much juice is needed to use an ability
+
+    const bgColor = "#a28c17aa"
+    const fillColor = "#d5bb30"
+    const barWidth = 10
+    const barHeight = this.maxAbilityJuice
+    const barX = constants.screenWidth - barWidth - 10
+    const barY = constants.screenHeight - barHeight - 10
+
+    ctx.shadowBlur = 0
+
+    ctx.fillStyle = bgColor
+    ctx.fillRect(barX, barY, barWidth, barHeight)
+
+    const juiceHeight = (this.abilityJuice / this.maxAbilityJuice) * barHeight
+    ctx.fillStyle = fillColor
+    ctx.fillRect(barX, barY + barHeight - juiceHeight, barWidth, juiceHeight)
+
+    //render separator every 100px
+    const separatorHeight = 2
+    const numSeparators = Math.floor(barHeight / this.abilityJuiceCost)
+    ctx.fillStyle = bgColor
+    for (let i = 0; i < numSeparators; i++) {
+      const y = barY + (i + 1) * this.abilityJuiceCost
+      ctx.fillRect(barX, y, barWidth, separatorHeight)
+    }
   }
 
   drawVelocityParticles(ctx: CanvasRenderingContext2D, yOffset: number): void {
@@ -160,8 +205,18 @@ export class Player extends GameObject {
         case "s":
           this.inputs.down = true
           break
+      }
+    })
+
+    window.addEventListener("keypress", (e) => {
+      switch (e.key.toLowerCase()) {
         case " ":
-          this.inputs.space = true
+          if (this.abilities.length > 0) {
+            if (this.abilityJuice >= this.abilityJuiceCost) {
+              this.selectedAbility?.use(this)
+              this.abilityJuice -= this.abilityJuiceCost
+            }
+          }
           break
       }
     })
@@ -183,9 +238,6 @@ export class Player extends GameObject {
         case "arrowdown":
         case "s":
           this.inputs.down = false
-          break
-        case " ":
-          this.inputs.space = false
           break
       }
     })

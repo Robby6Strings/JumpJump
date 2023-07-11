@@ -27,6 +27,22 @@ export class Ability {
     }
   }
 
+  use(player: GameObject) {
+    switch (this.type) {
+      case AbilityType.SlowMo:
+        GameObject.speedMultiplier *= 0.5
+        setTimeout(() => {
+          GameObject.speedMultiplier *= 2
+        }, 6000)
+        break
+      case AbilityType.DoubleJump:
+        player.vel.y -= player.jumpPower * 2
+        break
+      default:
+        break
+    }
+  }
+
   render(ctx: CanvasRenderingContext2D, pos: Vec2, size: number): void {
     ctx.drawImage(this.img, pos.x - size / 2, pos.y - size / 2, size, size)
   }

@@ -15,6 +15,7 @@ export class GameObject {
   isJumping: boolean = false
   hasJumpBoost: boolean = false
   gravityMultiplier: number = 1
+  static speedMultiplier: number = 1
   items: Signal<IItem[]> = new Signal([] as IItem[])
 
   size: { width: number; height: number } = { width: 0, height: 0 }
@@ -89,10 +90,10 @@ export class GameObject {
   applyFriction() {
     if (this.isStatic) return
     if (this.vel.x > 0) {
-      this.vel.x -= constants.friction
+      this.vel.x -= constants.friction * GameObject.speedMultiplier
       if (this.vel.x < 0) this.vel.x = 0
     } else if (this.vel.x < 0) {
-      this.vel.x += constants.friction
+      this.vel.x += constants.friction * GameObject.speedMultiplier
       if (this.vel.x > 0) this.vel.x = 0
     }
   }
@@ -105,15 +106,16 @@ export class GameObject {
       this.isJumping = false
       return
     }
-    this.vel.y += constants.gravity * this.gravityMultiplier
+    this.vel.y +=
+      constants.gravity * this.gravityMultiplier * GameObject.speedMultiplier
   }
 
   applyVelocity() {
     if (this.isStatic) return
     if (this.vel.x > this.maxSpeed) this.vel.x = this.maxSpeed
     if (this.vel.x < -this.maxSpeed) this.vel.x = -this.maxSpeed
-    this.pos.x += this.vel.x
-    this.pos.y += this.vel.y
+    this.pos.x += this.vel.x * GameObject.speedMultiplier
+    this.pos.y += this.vel.y * GameObject.speedMultiplier
     if (!this.canLeaveMap) {
       if (this.pos.x - this.halfSize.width < 0) {
         this.pos.x = this.halfSize.width
