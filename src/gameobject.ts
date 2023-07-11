@@ -186,6 +186,10 @@ export class GameObject {
       this.vel.y >= 0 &&
       playerBottom - magicNumberForPersistentCollisions <= platformTop
     ) {
+      if (platform.hasBehaviour(PlatformBehaviour.DestroyOnTouch)) {
+        platform.isCollidable = false
+        platform.color = "#0000"
+      }
       this.pos.y =
         platform.pos.y -
         platform.halfSize.height -

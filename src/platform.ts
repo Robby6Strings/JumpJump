@@ -15,6 +15,7 @@ export enum PlatformBehaviour {
   JumpBoost,
   MovesX,
   MovesY,
+  DestroyOnTouch,
 }
 
 export class Platform extends GameObject {
@@ -43,6 +44,9 @@ export class Platform extends GameObject {
     } else if (this.hasBehaviour(PlatformBehaviour.SuperBounce)) {
       this.color = "#55F"
       this.glowColor = "#228"
+    } else if (this.hasBehaviour(PlatformBehaviour.DestroyOnTouch)) {
+      this.color = "#66A8"
+      this.glows = false
     } else {
       this.glowSize = 3
       this.glowColor = "#000A"
@@ -61,6 +65,9 @@ export class Platform extends GameObject {
 
     behaviours.push(PlatformBehaviour.Bounce)
 
+    if (Math.random() > 0.95) {
+      behaviours.push(PlatformBehaviour.DestroyOnTouch)
+    }
     if (Math.random() > 0.95) {
       behaviours.push(PlatformBehaviour.SuperBounce)
     }
