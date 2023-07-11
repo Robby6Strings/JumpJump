@@ -43,8 +43,10 @@ export class Player extends GameObject {
     this.glowColor = "#000A"
     this.glowSize = 3
     this.attachKeybinds()
-    for (let i = 0; i < 100; i++) {
-      this.addItem(new Item({ x: 0, y: 0 }, ItemType.Coin))
+    if (constants.testMode) {
+      for (let i = 0; i < constants.testCoins; i++) {
+        this.addItem(new Item({ x: 0, y: 0 }, ItemType.Coin))
+      }
     }
   }
 

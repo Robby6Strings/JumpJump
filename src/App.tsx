@@ -84,7 +84,7 @@ const ShopAbilityButton = ({ ability }: { ability: Ability }) => {
     <button
       className="shop-ability"
       onclick={() => game!.onShopAbilityClick(ability)}
-      watch={player.items}
+      watch={player.coins}
       bind:disabled={() => player.numCoins < ability.price}
       bind:title={() =>
         player.numCoins >= ability.price ? "" : "Not enough coins"
