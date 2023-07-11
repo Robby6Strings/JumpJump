@@ -32,10 +32,6 @@ export const createNewGame = () => {
   game = new Game()
 }
 export const isShopOpen = createSignal<boolean>(false)
-isShopOpen.subscribe((open) => {
-  console.log("shop open", open)
-})
-
 export const shopInventory = createSignal<Ability[]>([])
 
 export const frameRef = createSignal<number | null>(null)

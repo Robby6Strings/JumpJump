@@ -23,7 +23,6 @@ export const loadImages = (cb: { (): void }) => {
     const image = new Image()
     image.src = `../img/${imgRef.image}`
     image.onload = () => {
-      console.log("Image loaded", image)
       imagesLoaded++
       if (imagesLoaded === imageRefs.length) {
         cb()

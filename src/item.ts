@@ -158,7 +158,6 @@ export class Portal extends Item {
       images.value.find(
         (i) => i.name === `portal${this.idx === 0 ? "2" : ""}.png`
       )?.image || null
-    console.log("new portal img", this.img, this.idx)
   }
 }
 
