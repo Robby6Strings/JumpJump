@@ -7,12 +7,16 @@ import { ItemType } from "./enums.js"
 import { Ability } from "./ability.js"
 import { shopInventory } from "./state.js"
 import { Vec2 } from "./v2.js"
+import { Projectile } from "./projectile.js"
+import { Turret } from "./turret.js"
 
 export class Game {
   camera: Camera
   score: number = 0
   player: Player
   platforms: Platform[] = []
+  turrets: Turret[] = []
+  projectiles: Projectile[] = []
   items: Item[] = []
   maxSection: number
   isGameOver: boolean = false
@@ -52,9 +56,20 @@ export class Game {
     for (const platform of this.platforms) {
       platform.tick()
     }
+    this.platforms = this.platforms.filter((p) => !p.deleted)
     for (const item of this.items) {
       item.tick()
     }
+    this.items = this.items.filter((i) => !i.deleted)
+    for (const turret of this.turrets) {
+      turret.tick()
+    }
+    this.turrets = this.turrets.filter((t) => !t.deleted)
+    for (const projectile of this.projectiles) {
+      projectile.tick()
+    }
+    this.projectiles = this.projectiles.filter((p) => !p.deleted)
+
     this.player.tick()
     this.camera.tick()
 
@@ -104,6 +119,7 @@ export class Game {
 
     let didSpawnShop = false
 
+    // spawn platforms & coins, and a shop if needed
     for (let i = 0; i < platformCount; i++) {
       const spawnShop =
         !didSpawnShop && this.maxSection % constants.shopDistance === 0
@@ -180,11 +196,37 @@ export class Game {
         )
       }
     }
+
+    //turret
+    // 30, 0.8
+    if (this.maxSection % 2 === 0 && this.maxSection > 5) {
+      if (Math.random() > 0.3) {
+        const y =
+          constants.sectionHeight -
+          (this.maxSection + 1) * constants.sectionHeight
+        this.turrets.push(
+          new Turret(
+            { x: Math.random() > 0.5 ? 0 : constants.screenWidth, y },
+            this.player,
+            this.addProjectile.bind(this)
+          )
+        )
+      }
+    }
+
     this.platforms.push(...platforms)
   }
 
+  addProjectile(proj: Projectile) {
+    this.projectiles.push(proj)
+  }
+
   handleCollisions() {
-    this.player.handleCollisions([...this.platforms, ...this.items])
+    this.player.handleCollisions([
+      ...this.platforms,
+      ...this.items,
+      ...this.projectiles,
+    ])
   }
 
   onShopContinueClick() {

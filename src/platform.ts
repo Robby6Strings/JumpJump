@@ -55,7 +55,7 @@ export class Platform extends GameObject {
   static randomPlatform(
     pos: Vec2,
     size: { width: number; height: number } = {
-      width: Math.random() * 100 + 50,
+      width: Math.random() * 100 + 60,
       height: Math.random() * 10 + 20,
     },
     behaviours: PlatformBehaviour[] = []

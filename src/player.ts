@@ -5,6 +5,7 @@ import { GameObjectType, ItemType } from "./enums.js"
 import { GameObject } from "./gameobject.js"
 import { IItem, Item } from "./item.js"
 import { Vec2 } from "./v2.js"
+import { StatusEffectManager } from "./statusEffect.js"
 
 type VelocityParticle = {
   pos: Vec2
@@ -21,6 +22,8 @@ export class Player extends GameObject {
   abilityJuice: number = 0
   maxAbilityJuice: number = 300
   selectedAbilityIndex: number = -1
+
+  statusEffects: StatusEffectManager = new StatusEffectManager()
 
   inputs = {
     left: false,
@@ -67,6 +70,7 @@ export class Player extends GameObject {
       this.size.width = 50
     }
 
+    this.statusEffects.tick()
     this.emitVelocityParticles()
     this.handleInputs()
     super.tick()

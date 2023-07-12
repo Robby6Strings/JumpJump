@@ -4,6 +4,8 @@ import { GameObjectType, Shape } from "./enums.js"
 import { IItem, Item } from "./item.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
 import type { Vec2 } from "./v2"
+import { Projectile } from "./projectile.js"
+import { type Player } from "./player.js"
 
 export class GameObject {
   type: GameObjectType = GameObjectType.Unset
@@ -37,6 +39,7 @@ export class GameObject {
   isCollidable: boolean = true
   isColliding: boolean = false
   canLeaveMap: boolean = false
+  deleted: boolean = false
 
   draw(ctx: CanvasRenderingContext2D, yOffset: number = 0) {
     if (this.glows) {
@@ -156,12 +159,15 @@ export class GameObject {
           break
         case GameObjectType.Item:
           const item = object as Item
-          const remove = item.interactWith(this)
-
-          if (remove) {
-            item.deleted = true
-            item.isCollidable = false
+          item.interactWith(this)
+          break
+        case GameObjectType.Projectile:
+          const projectile = object as Projectile
+          projectile.deleted = true
+          if (projectile.statusEffect) {
+            ;(this as any as Player).statusEffects.add(projectile.statusEffect)
           }
+
           break
         default:
           break
@@ -187,8 +193,7 @@ export class GameObject {
       playerBottom - magicNumberForPersistentCollisions <= platformTop
     ) {
       if (platform.hasBehaviour(PlatformBehaviour.DestroyOnTouch)) {
-        platform.isCollidable = false
-        platform.color = "#0000"
+        platform.deleted = true
       }
       this.pos.y =
         platform.pos.y -
@@ -265,5 +270,10 @@ export class GameObject {
       Math.pow(object.pos.x - this.pos.x, 2) +
         Math.pow(object.pos.y - this.pos.y, 2)
     )
+  }
+  angleTo(target: GameObject): number {
+    const dx = target.pos.x - this.pos.x
+    const dy = target.pos.y - this.pos.y
+    return Math.atan2(dy, dx)
   }
 }

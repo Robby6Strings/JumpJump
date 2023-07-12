@@ -10,7 +10,6 @@ export interface IItem {
 
 export class Item extends GameObject implements IItem {
   itemType: ItemType = ItemType.Unset
-  deleted: boolean = false
   isInteracting: boolean = false
 
   constructor(pos: Vec2, itemType: ItemType) {
@@ -31,14 +30,6 @@ export class Item extends GameObject implements IItem {
         this.img =
           images.value.find((i) => i.name === "coin.png")?.image || null
         this.shape = Shape.Circle
-        break
-      case ItemType.Jetpack:
-        this.img =
-          images.value.find((i) => i.name === "jetpack.png")?.image || null
-        break
-      case ItemType.Checkpoint:
-        this.img =
-          images.value.find((i) => i.name === "checkpoint.png")?.image || null
         break
       case ItemType.AntiGravity:
         this.img =
@@ -70,8 +61,8 @@ export class Item extends GameObject implements IItem {
     switch (this.itemType) {
       case ItemType.Portal:
         if (this instanceof Portal && this.otherPortal) {
-          if (this.isInteracting) return false
-          if (this.otherPortal.isInteracting) return false
+          if (this.isInteracting) return
+          if (this.otherPortal.isInteracting) return
 
           this.isInteracting = true
           this.otherPortal.isInteracting = true
@@ -87,29 +78,22 @@ export class Item extends GameObject implements IItem {
         break
       case ItemType.Coin:
         object.addItem(this)
-        return true
+        this.deleted = true
+        break
       case ItemType.AntiGravity:
         object.gravityMultiplier -= 0.5
         setTimeout(() => {
           object.gravityMultiplier += 0.5
         }, 8_000)
-        return true
+        this.deleted = true
+        break
       case ItemType.Shop:
-        if (isShopOpen.value) return false
+        if (isShopOpen.value) return
         isShopOpen.value = true
-        return false
+        break
       default:
         break
     }
-    return false
-  }
-
-  draw(ctx: CanvasRenderingContext2D, yOffset: number): void {
-    if (this.deleted) return
-    super.draw(ctx, yOffset)
-    // ctx.strokeStyle = "#FFF"
-    // ctx.lineWidth = 2
-    // ctx.strokeRect(this.pos.x, this.pos.y - yOffset, this.size.width, this.size.height)
   }
 }
 

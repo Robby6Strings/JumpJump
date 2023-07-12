@@ -15,14 +15,20 @@ export enum GameObjectType {
   Player,
   Platform,
   Item,
+  Turret,
+  Projectile,
 }
 
 export enum ItemType {
   Unset,
   Coin,
-  Jetpack,
   Portal,
-  Checkpoint,
   AntiGravity,
   Shop,
+}
+
+export enum StatusEffectType {
+  Unset,
+  Chill,
+  Stun,
 }

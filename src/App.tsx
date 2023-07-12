@@ -151,6 +151,14 @@ function loop() {
     if (!shouldDraw(item)) continue
     item.draw(ctx, game.camera.offsetY)
   }
+  for (const turret of game.turrets) {
+    if (!shouldDraw(turret)) continue
+    turret.draw(ctx, game.camera.offsetY)
+  }
+  for (const projectile of game.projectiles) {
+    if (!shouldDraw(projectile)) continue
+    projectile.draw(ctx, game.camera.offsetY)
+  }
   game.player.draw(ctx, game.camera.offsetY)
 
   if (game.directionIndicator && game.directionIndicatorIcon) {
