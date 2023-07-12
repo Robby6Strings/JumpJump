@@ -1,7 +1,7 @@
 import { Signal } from "cinnabun"
 import { Ability } from "./ability.js"
 import { constants } from "./constants.js"
-import { GameObjectType, ItemType } from "./enums.js"
+import { GameObjectType, ItemType, StatusEffectType } from "./enums.js"
 import { GameObject } from "./gameobject.js"
 import { IItem, Item } from "./item.js"
 import { Vec2 } from "./v2.js"
@@ -30,6 +30,13 @@ export class Player extends GameObject {
     right: false,
     up: false,
     down: false,
+  }
+
+  get isChilled(): boolean {
+    return this.statusEffects.has(StatusEffectType.Chill)
+  }
+  get isStunned(): boolean {
+    return this.statusEffects.has(StatusEffectType.Stun)
   }
 
   constructor() {
@@ -73,6 +80,18 @@ export class Player extends GameObject {
     this.statusEffects.tick()
     this.emitVelocityParticles()
     this.handleInputs()
+    if (this.isChilled) {
+      this.vel.x *= 0.9
+      if (this.vel.y < 0) {
+        this.vel.y *= 0.9
+      } else {
+        this.vel.y *= 0.95
+      }
+    }
+    if (this.isStunned) {
+      this.vel.x = 0
+      this.vel.y = 0
+    }
     super.tick()
     if (this.abilities.length > 0) {
       if (this.vel.y < 0) {
@@ -104,6 +123,7 @@ export class Player extends GameObject {
       this.renderAbilityJuiceBar(ctx)
       this.renderAbilities(ctx)
     }
+    this.statusEffects.draw(ctx, this.pos, yOffset, this.size)
   }
 
   renderAbilityJuiceBar(ctx: CanvasRenderingContext2D): void {

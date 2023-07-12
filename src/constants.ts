@@ -1,4 +1,4 @@
-const testMode: boolean = true
+const testMode: boolean = false
 
 export const constants = {
   screenWidth: 640,
