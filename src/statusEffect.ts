@@ -63,13 +63,9 @@ export class StatusEffectManager {
   }
 
   add(effect: StatusEffect) {
-    const existingEffect = this.effects.find((e) => {
-      return e.type === effect.type
+    this.effects = this.effects.filter((e) => {
+      return e.type !== effect.type
     })
-    if (existingEffect) {
-      existingEffect.duration += effect.duration
-      return
-    }
     this.effects.push(effect)
   }
 

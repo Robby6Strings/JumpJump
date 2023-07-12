@@ -84,7 +84,7 @@ export class Item extends GameObject implements IItem {
         object.gravityMultiplier -= 0.5
         setTimeout(() => {
           object.gravityMultiplier += 0.5
-        }, 8_000)
+        }, 4_000)
         this.deleted = true
         break
       case ItemType.Shop:

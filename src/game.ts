@@ -199,7 +199,7 @@ export class Game {
 
     //turret
     // 30, 0.8
-    if (this.maxSection % 2 === 0 && this.maxSection > 5) {
+    if (this.maxSection % 3 === 0 && this.maxSection > 5) {
       if (Math.random() > 0.3) {
         const y =
           constants.sectionHeight -
