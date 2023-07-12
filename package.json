@@ -14,6 +14,6 @@
   },
   "dependencies": {
     "cinnabun": "^0.1.43",
-    "cinnabun-transitions": "^1.0.3"
+    "cinnabun-transitions": "^1.0.5"
   }
 }

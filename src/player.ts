@@ -23,6 +23,9 @@ export class Player extends GameObject {
   maxAbilityJuice: number = 300
   selectedAbilityIndex: number = -1
 
+  defaultColor: string = "#69c"
+  chilledColor: string = "#8ac"
+
   statusEffects: StatusEffectManager = new StatusEffectManager()
 
   inputs = {
@@ -48,7 +51,7 @@ export class Player extends GameObject {
     this.pos.y = constants.screenHeight - this.halfSize.height
     this.isStatic = false
     this.affectedByGravity = true
-    this.color = "#69c"
+    this.color = this.defaultColor
     this.glows = true
     this.glowColor = "#000A"
     this.glowSize = 3
@@ -80,7 +83,10 @@ export class Player extends GameObject {
     this.statusEffects.tick()
     this.emitVelocityParticles()
     this.handleInputs()
+    this.color = this.defaultColor
+
     if (this.isChilled) {
+      this.color = this.chilledColor
       this.vel.x *= 0.9
       if (this.vel.y < 0) {
         this.vel.y *= 0.9

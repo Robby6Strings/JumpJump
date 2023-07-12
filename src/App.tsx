@@ -60,6 +60,7 @@ export const App = () => {
         id="shop-ui"
         watch={isShopOpen}
         bind:visible={() => isShopOpen.value}
+        cancelExit={() => isShopOpen.value}
       >
         <h1>Shop</h1>
         <div className="shop-inventory" watch={shopInventory} bind:children>
