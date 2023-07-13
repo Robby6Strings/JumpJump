@@ -9,8 +9,6 @@ type HtmlElements = {
   ctx?: CanvasRenderingContext2D
   bgCanvas?: HTMLCanvasElement
   bgCtx?: CanvasRenderingContext2D
-  fgCanvas?: HTMLCanvasElement
-  fgCtx?: CanvasRenderingContext2D
 }
 
 export const HtmlElements = createSignal<HtmlElements>({})
