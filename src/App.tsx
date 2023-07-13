@@ -124,11 +124,13 @@ function main() {
   )
   createNewGame()
 
-  loop()
+  interval = window.setInterval(() => {
+    loop()
+  }, 1000 / 60)
 }
 
 let lastDistance = 0
-
+let interval: number | undefined = undefined
 function shouldDraw(object: GameObject) {
   return (
     object.pos.y + object.size.height >
@@ -187,6 +189,4 @@ function loop() {
 
   // render coins
   ctx.fillText(`Coins: ${game.player.numCoins}`, 10, 40)
-
-  frameRef.value = requestAnimationFrame(loop)
 }
