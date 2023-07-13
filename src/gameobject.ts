@@ -18,6 +18,7 @@ export class GameObject {
   isJumping: boolean = false
   hasJumpBoost: boolean = false
   gravityMultiplier: number = 1
+  frictionMultiplier: number = 1
   static speedMultiplier: number = 1
   items: Signal<IItem[]> = new Signal([] as IItem[])
 
@@ -94,10 +95,16 @@ export class GameObject {
   applyFriction() {
     if (this.isStatic) return
     if (this.vel.x > 0) {
-      this.vel.x -= constants.friction * GameObject.speedMultiplier
+      this.vel.x -=
+        constants.friction *
+        this.frictionMultiplier *
+        GameObject.speedMultiplier
       if (this.vel.x < 0) this.vel.x = 0
     } else if (this.vel.x < 0) {
-      this.vel.x += constants.friction * GameObject.speedMultiplier
+      this.vel.x +=
+        constants.friction *
+        this.frictionMultiplier *
+        GameObject.speedMultiplier
       if (this.vel.x > 0) this.vel.x = 0
     }
   }

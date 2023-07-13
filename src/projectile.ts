@@ -23,6 +23,7 @@ export class Projectile extends GameObject {
     this.shape = Shape.Circle
     this.size = { width: radius * 2, height: radius * 2 }
     this.affectedByGravity = true
+    this.frictionMultiplier = 0.5
   }
 
   tick(): void {

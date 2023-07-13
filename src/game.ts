@@ -67,6 +67,9 @@ export class Game {
     this.turrets = this.turrets.filter((t) => !t.deleted)
     for (const projectile of this.projectiles) {
       projectile.tick()
+      if (projectile.distanceTo(this.player) > constants.screenHeight * 4) {
+        projectile.deleted = true
+      }
     }
     this.projectiles = this.projectiles.filter((p) => !p.deleted)
 
