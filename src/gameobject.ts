@@ -186,7 +186,7 @@ export class GameObject {
     }
     const playerBottom = this.pos.y + this.halfSize.height - this.vel.y
     const platformTop = platform.pos.y - platform.halfSize.height
-    const magicNumberForPersistentCollisions = 1
+    const magicNumberForPersistentCollisions = 2
 
     if (
       this.vel.y >= 0 &&

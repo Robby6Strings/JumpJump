@@ -1,3 +1,4 @@
+import * as Cinnabun from "cinnabun"
 import { Transition } from "cinnabun-transitions"
 import { constants } from "./constants"
 import { loadImages } from "./images"
