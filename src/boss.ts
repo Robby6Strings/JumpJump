@@ -5,6 +5,7 @@ import { images } from "./state"
 
 export class Boss extends GameObject {
   size = { width: 100, height: 100 }
+  onKilledFunc: { (): void } | null = null
   constructor() {
     super()
     this.type = GameObjectType.Boss
@@ -37,5 +38,9 @@ export class Boss extends GameObject {
       this.vel.y = 0
       this.isJumping = false
     }
+  }
+
+  onKilled(func: { (): void }) {
+    this.onKilledFunc = func
   }
 }

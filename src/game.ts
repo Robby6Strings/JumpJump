@@ -72,6 +72,8 @@ export class Game {
     for (const boss of this.bosses) {
       boss.tick()
     }
+    if (this.currentBoss?.deleted) this.currentBoss = null
+
     this.bosses = this.bosses.filter((n) => !n.deleted)
 
     if (this.currentBoss) {
@@ -184,22 +186,29 @@ export class Game {
         y,
       }
 
+      const ceiling = new Platform({
+        size: { width: 1000, height: 50 },
+        pos: { x: bossInitialPos.x, y: bossInitialPos.y - 400 },
+        behaviours: [PlatformBehaviour.NoPassThrough],
+      })
+
       const boss = new Boss()
       boss.pos = bossInitialPos
+      boss.onKilled(() => {
+        ceiling.deleted = true
+      })
 
       this.bosses.push(boss)
       this.currentBoss = boss
 
-      // spawn a platform under the boss
       platforms.push(
+        ceiling,
         new Platform({
           size: { width: 140, height: 20 },
           pos: { x: boss.pos.x, y: boss.pos.y + boss.halfSize.height + 10 },
           behaviours: [],
         })
       )
-
-      console.log("boss encounter at", y)
     } else {
       // spawn platforms & coins, and a shop if needed
       for (let i = 0; i < platformCount; i++) {

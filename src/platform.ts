@@ -16,6 +16,7 @@ export enum PlatformBehaviour {
   MovesX,
   MovesY,
   DestroyOnTouch,
+  NoPassThrough,
 }
 
 export class Platform extends GameObject {
@@ -34,7 +35,6 @@ export class Platform extends GameObject {
     this.size = size
     this.color = "#66A"
     this.isStatic = true
-    this.canLeaveMap = true
     this.behaviours = behaviours
     this.glows = true
     this.glowSize = 3

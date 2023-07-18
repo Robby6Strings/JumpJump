@@ -200,8 +200,10 @@ export class GameObject {
     if (platform.hasBehaviour(PlatformBehaviour.JumpBoost)) {
       this.hasJumpBoost = true
     }
+    const playerTop = this.pos.y - this.halfSize.height - this.vel.y
     const playerBottom = this.pos.y + this.halfSize.height - this.vel.y
     const platformTop = platform.pos.y - platform.halfSize.height
+    const platformBottom = platform.pos.y + platform.halfSize.height
     const magicNumberForPersistentCollisions = 2
 
     if (
@@ -225,6 +227,13 @@ export class GameObject {
         this.vel.y = -(this.jumpPower * 1.5)
       } else if (platform.hasBehaviour(PlatformBehaviour.Bounce)) {
         this.vel.y = -(this.jumpPower * 0.75)
+      }
+    } else if (
+      this.vel.y <= 0 &&
+      playerTop - magicNumberForPersistentCollisions >= platformBottom
+    ) {
+      if (platform.hasBehaviour(PlatformBehaviour.NoPassThrough)) {
+        this.vel.y = -this.vel.y
       }
     }
   }
