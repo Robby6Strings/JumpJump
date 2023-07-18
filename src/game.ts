@@ -342,6 +342,7 @@ export class Game {
       ...this.platforms,
       ...this.items,
       ...this.projectiles,
+      ...this.bosses,
     ])
     this.bosses.forEach((b) => {
       b.handleCollisions([...this.platforms])

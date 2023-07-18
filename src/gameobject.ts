@@ -7,6 +7,7 @@ import type { Vec2 } from "./v2"
 import { Projectile } from "./projectile.js"
 import { type Player } from "./player.js"
 import { Camera } from "./camera.js"
+import { Boss } from "./boss.js"
 
 export class GameObject {
   type: GameObjectType = GameObjectType.Unset
@@ -162,6 +163,10 @@ export class GameObject {
   handleCollision(object: GameObject) {
     if (this.type === GameObjectType.Player) {
       switch (object.type) {
+        case GameObjectType.Boss:
+          this.handleBossCollision(object as Boss)
+
+          break
         case GameObjectType.Platform:
           this.handlePlatformCollision(object as Platform)
           break
@@ -189,6 +194,21 @@ export class GameObject {
           break
       }
     }
+  }
+
+  handleBossCollision(boss: Boss) {
+    // rebound the player away
+    const angle = this.angleTo(boss)
+    const distance = this.distanceTo(boss)
+    const reboundDistance = this.halfSize.width + boss.halfSize.width - distance
+    this.pos.x += Math.cos(angle) * reboundDistance
+    this.pos.y += Math.sin(angle) * reboundDistance
+    this.vel.x = Math.cos(angle) * 500
+    this.vel.y = Math.sin(angle) * 10
+    this.isCollidable = false
+    setTimeout(() => {
+      this.isCollidable = true
+    }, 150)
   }
 
   addItem(item: IItem) {

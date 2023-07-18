@@ -187,6 +187,8 @@ export class Charger extends Item {
     const x = (this.pos.x - offsetX) * camera.zoom
     const y = (this.pos.y - offsetY) * camera.zoom
 
+    const fillColor = "gold"
+
     ctx.beginPath()
     ctx.arc(
       x,
@@ -195,7 +197,7 @@ export class Charger extends Item {
       0,
       (Math.PI * 2 * this.chargeAmount) / this.chargeMax
     )
-    ctx.strokeStyle = "#FF0"
+    ctx.strokeStyle = fillColor
     ctx.lineWidth = 2
     ctx.stroke()
     ctx.closePath()
@@ -221,7 +223,7 @@ export class Charger extends Item {
       0,
       Math.PI * 2 * (this.chargeAmount / this.chargeMax)
     )
-    ctx.fillStyle = "#FF0"
+    ctx.fillStyle = fillColor
     ctx.fill()
     ctx.closePath()
 
@@ -245,7 +247,7 @@ export class Charger extends Item {
       0,
       Math.PI * 2 * (this.chargeAmount / this.chargeMax)
     )
-    ctx.fillStyle = "#FF0"
+    ctx.fillStyle = fillColor
     ctx.fill()
     ctx.closePath()
   }
