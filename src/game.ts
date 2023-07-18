@@ -207,6 +207,16 @@ export class Game {
           size: { width: 140, height: 20 },
           pos: { x: boss.pos.x, y: boss.pos.y + boss.halfSize.height + 10 },
           behaviours: [],
+        }),
+        new Platform({
+          size: { width: 140, height: 20 },
+          pos: { x: boss.pos.x + 280, y: boss.pos.y - 70 },
+          behaviours: [],
+        }),
+        new Platform({
+          size: { width: 140, height: 20 },
+          pos: { x: boss.pos.x - 280, y: boss.pos.y - 70 },
+          behaviours: [],
         })
       )
     } else {
