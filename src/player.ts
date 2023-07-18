@@ -172,13 +172,14 @@ export class Player extends GameObject {
     const x = constants.screenWidth - abilitySize - padding - 30
     const y = constants.screenHeight - abilitySize - padding
 
-    ctx.strokeStyle = "#0004"
-    ctx.fillStyle = "#0004"
-    ctx.lineWidth = 2
-
     this.abilities.forEach((ability, i) => {
+      ctx.strokeStyle = "#0004"
+      ctx.fillStyle = "#0004"
+      ctx.lineWidth = 2
+
+      const offset = this.abilities.length - i - 1
       ctx.beginPath()
-      ctx.roundRect(x - i * abilitySize, y, abilitySize, abilitySize, 5)
+      ctx.roundRect(x - offset * abilitySize, y, abilitySize, abilitySize, 5)
       ctx.fill()
       ctx.stroke()
       ctx.closePath()
@@ -187,11 +188,35 @@ export class Player extends GameObject {
 
       ctx.drawImage(
         ability.img,
-        x + padding - i * abilitySize,
+        x + padding - offset * abilitySize,
         y + padding,
         abilitySize - padding * 2,
         abilitySize - padding * 2
       )
+
+      // render button prompts
+      ctx.fillStyle = "#fff"
+      ctx.font = "bold 10px sans-serif"
+      ctx.textAlign = "center"
+      let txt = "space"
+
+      switch (i) {
+        case 0:
+          txt = "space"
+          break
+        case 1:
+          txt = "c"
+          break
+        case 2:
+          txt = "v"
+          break
+        case 3:
+          txt = "b"
+          break
+        default:
+          break
+      }
+      ctx.fillText(txt, abilitySize / 2 + x - offset * abilitySize, y)
     })
   }
 

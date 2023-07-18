@@ -184,6 +184,7 @@ function loop() {
     constants.screenHeight * 1000
   )
 
+  ctx.textAlign = "left"
   // render height
   ctx.fillStyle = "white"
   ctx.font = "13px monospace"
