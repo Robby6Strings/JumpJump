@@ -33,6 +33,7 @@ export class Player extends GameObject {
     right: false,
     up: false,
     down: false,
+    interact: false,
     ability1: false,
     ability2: false,
     ability3: false,
@@ -325,6 +326,9 @@ export class Player extends GameObject {
         case "s":
           this.inputs.down = true
           break
+        case "f":
+          this.inputs.interact = true
+          break
         case "c":
           this.inputs.ability1 = true
           break
@@ -364,6 +368,9 @@ export class Player extends GameObject {
           break
         case "s":
           this.inputs.down = false
+          break
+        case "f":
+          this.inputs.interact = false
           break
         case "c":
           this.inputs.ability1 = false

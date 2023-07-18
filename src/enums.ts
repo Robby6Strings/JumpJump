@@ -26,6 +26,7 @@ export enum ItemType {
   Portal,
   AntiGravity,
   Shop,
+  Charger,
 }
 
 export enum StatusEffectType {

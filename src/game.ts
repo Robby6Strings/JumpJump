@@ -1,6 +1,6 @@
 import { constants } from "./constants.js"
 import { Platform, PlatformBehaviour } from "./platform.js"
-import { IItem, Item, Portal, Shop } from "./item.js"
+import { Charger, IItem, Item, Portal, Shop } from "./item.js"
 import { Player } from "./player.js"
 import { Camera } from "./camera.js"
 import { ItemType } from "./enums.js"
@@ -212,31 +212,42 @@ export class Game {
         }),
         new Platform({
           size: { width: 140, height: 20 },
-          pos: { x: boss.pos.x + 280, y: boss.pos.y - 70 },
+          pos: { x: boss.pos.x + 300, y: boss.pos.y - 70 },
           behaviours: [],
         }),
         new Platform({
           size: { width: 140, height: 20 },
           pos: {
-            x: boss.pos.x + 560,
+            x: boss.pos.x + 580,
             y: boss.pos.y + boss.halfSize.height + 10,
           },
           behaviours: [],
         }),
         new Platform({
           size: { width: 140, height: 20 },
-          pos: { x: boss.pos.x - 280, y: boss.pos.y - 70 },
+          pos: { x: boss.pos.x - 300, y: boss.pos.y - 70 },
           behaviours: [],
         }),
         new Platform({
           size: { width: 140, height: 20 },
           pos: {
-            x: boss.pos.x - 560,
+            x: boss.pos.x - 580,
             y: boss.pos.y + boss.halfSize.height + 10,
           },
           behaviours: [],
         }),
       ]
+
+      for (let i = 0; i < boss.platforms.length; i++) {
+        if (i % 2 === 0) continue
+        const platform = boss.platforms[i]
+        this.items.push(
+          new Charger({
+            x: platform.pos.x,
+            y: platform.pos.y - platform.halfSize.height - 20,
+          })
+        )
+      }
 
       platforms.push(ceiling, ...boss.platforms)
     } else {

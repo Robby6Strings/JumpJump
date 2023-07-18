@@ -3,6 +3,8 @@ import { GameObjectType, ItemType, Shape } from "./enums"
 import { GameObject } from "./gameobject"
 import { Vec2 } from "./v2"
 import { game, images, isShopOpen } from "./state"
+import { Player } from "./player"
+import { Camera } from "./camera"
 
 export interface IItem {
   itemType: ItemType
@@ -38,7 +40,11 @@ export class Item extends GameObject implements IItem {
       case ItemType.Shop:
         this.img =
           images.value.find((i) => i.name === "shop.png")?.image || null
-        this.size = { width: 64, height: 64 }
+        this.glows = false
+        break
+      case ItemType.Charger:
+        this.img =
+          images.value.find((i) => i.name === "charger.png")?.image || null
         this.glows = false
         break
       default:
@@ -148,8 +154,99 @@ export class Portal extends Item {
 export class Shop extends Item {
   constructor(pos: Vec2) {
     super(pos, ItemType.Shop)
-    this.size.width = 64
-    this.size.height = 64
+    this.size = { width: 64, height: 64 }
     this.glowColor = "#FF0"
+  }
+}
+
+export class Charger extends Item {
+  chargeAmount: number = 0
+  chargeMax: number = 100
+  constructor(pos: Vec2) {
+    super(pos, ItemType.Charger)
+    this.size = { width: 64, height: 64 }
+    this.glows = false
+  }
+
+  interactWith(object: GameObject) {
+    if (!(object instanceof Player)) return
+    if (object.inputs.interact) this.charge()
+  }
+
+  charge() {
+    this.chargeAmount += 0.5
+    if (this.chargeAmount > this.chargeMax) this.chargeAmount = this.chargeMax
+  }
+
+  draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
+    super.draw(ctx, camera)
+
+    // draw a radial charging indicator above
+
+    const { offsetX, offsetY } = camera
+    const x = (this.pos.x - offsetX) * camera.zoom
+    const y = (this.pos.y - offsetY) * camera.zoom
+
+    ctx.beginPath()
+    ctx.arc(
+      x,
+      y - this.size.height / 2 - 10,
+      10,
+      0,
+      (Math.PI * 2 * this.chargeAmount) / this.chargeMax
+    )
+    ctx.strokeStyle = "#FF0"
+    ctx.lineWidth = 2
+    ctx.stroke()
+    ctx.closePath()
+
+    ctx.beginPath()
+    ctx.arc(
+      x,
+      y - this.size.height / 2 - 10,
+      10,
+      (Math.PI * 2 * this.chargeAmount) / this.chargeMax,
+      Math.PI * 2
+    )
+    ctx.strokeStyle = "#333"
+    ctx.lineWidth = 2
+    ctx.stroke()
+    ctx.closePath()
+
+    ctx.beginPath()
+    ctx.arc(
+      x,
+      y - this.size.height / 2 - 10,
+      8,
+      0,
+      Math.PI * 2 * (this.chargeAmount / this.chargeMax)
+    )
+    ctx.fillStyle = "#FF0"
+    ctx.fill()
+    ctx.closePath()
+
+    ctx.beginPath()
+    ctx.arc(
+      x,
+      y - this.size.height / 2 - 10,
+      8,
+      Math.PI * 2 * (this.chargeAmount / this.chargeMax),
+      Math.PI * 2
+    )
+    ctx.fillStyle = "#333"
+    ctx.fill()
+    ctx.closePath()
+
+    ctx.beginPath()
+    ctx.arc(
+      x,
+      y - this.size.height / 2 - 10,
+      6,
+      0,
+      Math.PI * 2 * (this.chargeAmount / this.chargeMax)
+    )
+    ctx.fillStyle = "#FF0"
+    ctx.fill()
+    ctx.closePath()
   }
 }

@@ -9,7 +9,7 @@ export class Boss extends GameObject {
   platforms: Platform[] = []
   currentPlatform: number = 0
   jumpCooldown: number = 0
-  jumpCooldownMax: number = 2500
+  jumpCooldownMax: number = 1250
   jumpPower: number = 35
   frictionMultiplier: number = 0.5
 
