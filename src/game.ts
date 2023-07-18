@@ -9,6 +9,7 @@ import { shopInventory } from "./state.js"
 import { Vec2 } from "./v2.js"
 import { Projectile } from "./projectile.js"
 import { Turret } from "./turret.js"
+import { Boss } from "./boss.js"
 
 export class Game {
   camera: Camera
@@ -18,6 +19,8 @@ export class Game {
   turrets: Turret[] = []
   projectiles: Projectile[] = []
   items: Item[] = []
+  bosses: Boss[] = []
+  currentBoss: Boss | null = null
   maxSection: number
   isGameOver: boolean = false
   currentShop: Item | null = null
@@ -35,16 +38,8 @@ export class Game {
         behaviours: [PlatformBehaviour.Bounce, PlatformBehaviour.MovesX],
       }),
     ]
-    this.items = []
     this.camera = new Camera(this.player)
     this.maxSection = 1
-    this.generateNextSection()
-  }
-
-  set section(index: number) {
-    if (index <= this.maxSection) return
-
-    this.maxSection = index
     this.generateNextSection()
   }
 
@@ -74,6 +69,16 @@ export class Game {
     }
     this.projectiles = this.projectiles.filter((p) => !p.deleted)
 
+    for (const boss of this.bosses) {
+      boss.tick()
+    }
+    this.bosses = this.bosses.filter((n) => !n.deleted)
+    if (this.currentBoss && this.camera.zoom > 0.5) {
+      this.camera.zoom -= 0.01
+    } else if (!this.currentBoss && this.camera.zoom < 1) {
+      this.camera.zoom += 0.01
+    }
+
     this.player.tick()
     this.camera.tick()
 
@@ -83,9 +88,13 @@ export class Game {
         this.player.pos.y - constants.screenHeight + this.player.halfSize.height
       ) / 50
     )
-    this.section =
-      Math.abs(Math.floor(this.player.pos.y / constants.sectionHeight)) + 1
 
+    let curSection =
+      Math.abs(Math.floor(this.player.pos.y / constants.sectionHeight)) + 1
+    if (curSection > this.maxSection) {
+      this.maxSection = curSection
+      this.generateNextSection()
+    }
     this.renderShopIndicator()
   }
 
@@ -153,78 +162,108 @@ export class Game {
 
     let didSpawnShop = false
 
-    // spawn platforms & coins, and a shop if needed
-    for (let i = 0; i < platformCount; i++) {
-      const spawnShop =
-        !didSpawnShop && this.maxSection % constants.shopDistance === 0
+    if (
+      this.maxSection % 50 === 0 ||
+      (constants.testMode && this.maxSection === 1)
+    ) {
+      const y =
+        constants.sectionHeight -
+        this.maxSection * constants.sectionHeight +
+        100
+      const bossInitialPos = { x: constants.screenWidth / 2, y }
 
-      const heightVariance = 100
-      const x = this.horizontalVariation + Math.random() * (i + 1) * areaWidth
-      const y = spawnShop
-        ? constants.sectionHeight - this.maxSection * constants.sectionHeight
-        : constants.sectionHeight -
-          this.maxSection * constants.sectionHeight +
-          Math.random() * heightVariance -
-          heightVariance / 2
+      const boss = new Boss()
+      boss.pos = bossInitialPos
 
-      if (spawnShop) {
-        let shopX = Math.random() * constants.screenWidth
-        this.items.push(
-          new Shop({
-            x: shopX,
-            y: y - 48,
-          })
-        )
-        didSpawnShop = true
-        platforms.push(
-          Platform.randomPlatform({ x: shopX, y }, { height: 30, width: 160 }, [
-            PlatformBehaviour.JumpBoost,
-          ])
-        )
-        break
-      }
+      this.bosses.push(boss)
+      this.currentBoss = boss
 
-      // chance to spawn a coin above the platform
-      if (Math.random() > 0.66) {
-        this.items.push(
-          new Item({ x, y: y - constants.sectionHeight / 2 }, ItemType.Coin)
-        )
+      // spawn a platform under the boss
+      platforms.push(
+        new Platform({
+          size: { width: 140, height: 20 },
+          pos: { x: boss.pos.x, y: boss.pos.y + boss.halfSize.height + 10 },
+          behaviours: [],
+        })
+      )
+
+      console.log("boss encounter at", y)
+    } else {
+      // spawn platforms & coins, and a shop if needed
+      for (let i = 0; i < platformCount; i++) {
+        const spawnShop =
+          !didSpawnShop && this.maxSection % constants.shopDistance === 0
+
+        const heightVariance = 100
+        const x = this.horizontalVariation + Math.random() * (i + 1) * areaWidth
+        const y = spawnShop
+          ? constants.sectionHeight - this.maxSection * constants.sectionHeight
+          : constants.sectionHeight -
+            this.maxSection * constants.sectionHeight +
+            Math.random() * heightVariance -
+            heightVariance / 2
+
+        if (spawnShop) {
+          let shopX = Math.random() * constants.screenWidth
+          this.items.push(
+            new Shop({
+              x: shopX,
+              y: y - 48,
+            })
+          )
+          didSpawnShop = true
+          platforms.push(
+            Platform.randomPlatform(
+              { x: shopX, y },
+              { height: 30, width: 160 },
+              [PlatformBehaviour.JumpBoost]
+            )
+          )
+          break
+        }
+
+        // chance to spawn a coin above the platform
         if (Math.random() > 0.66) {
           this.items.push(
-            new Item(
-              { x, y: y - constants.sectionHeight / 2 - 64 },
-              ItemType.Coin
-            )
+            new Item({ x, y: y - constants.sectionHeight / 2 }, ItemType.Coin)
           )
           if (Math.random() > 0.66) {
             this.items.push(
               new Item(
-                { x, y: y - constants.sectionHeight / 2 - 128 },
+                { x, y: y - constants.sectionHeight / 2 - 64 },
                 ItemType.Coin
+              )
+            )
+            if (Math.random() > 0.66) {
+              this.items.push(
+                new Item(
+                  { x, y: y - constants.sectionHeight / 2 - 128 },
+                  ItemType.Coin
+                )
+              )
+            }
+          }
+        } else if (this.maxSection % 8 === 0) {
+          if (Math.random() > 0.8) {
+            const y =
+              constants.sectionHeight -
+              (this.maxSection + 1) * constants.sectionHeight
+            this.items.push(new Item({ x, y }, ItemType.AntiGravity))
+          }
+        } else if (this.maxSection % 3 === 0 && this.maxSection > 5) {
+          if (Math.random() > 0.8) {
+            this.turrets.push(
+              new Turret(
+                { x, y: y - 100 },
+                this.player,
+                this.addProjectile.bind(this)
               )
             )
           }
         }
-      } else if (this.maxSection % 8 === 0) {
-        if (Math.random() > 0.8) {
-          const y =
-            constants.sectionHeight -
-            (this.maxSection + 1) * constants.sectionHeight
-          this.items.push(new Item({ x, y }, ItemType.AntiGravity))
-        }
-      } else if (this.maxSection % 3 === 0 && this.maxSection > 5) {
-        if (Math.random() > 0.6) {
-          this.turrets.push(
-            new Turret(
-              { x, y: y - 100 },
-              this.player,
-              this.addProjectile.bind(this)
-            )
-          )
-        }
-      }
 
-      platforms.push(Platform.randomPlatform({ x, y }))
+        platforms.push(Platform.randomPlatform({ x, y }))
+      }
     }
 
     this.horizontalVariation += Math.random() * 300 - 150
@@ -242,6 +281,9 @@ export class Game {
       ...this.items,
       ...this.projectiles,
     ])
+    this.bosses.forEach((b) => {
+      b.handleCollisions([...this.platforms])
+    })
   }
 
   onShopContinueClick() {

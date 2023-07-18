@@ -161,6 +161,11 @@ function loop() {
     if (!shouldDraw(projectile)) continue
     projectile.draw(ctx, game.camera)
   }
+  for (const boss of game.bosses) {
+    if (!shouldDraw(boss)) continue
+    boss.draw(ctx, game.camera)
+  }
+
   game.player.draw(ctx, game.camera)
 
   if (game.directionIndicator && game.directionIndicatorIcon) {

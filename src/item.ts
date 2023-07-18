@@ -18,7 +18,7 @@ export class Item extends GameObject implements IItem {
     this.pos = pos
     this.itemType = itemType
     this.size = { width: 42, height: 42 }
-    // this.color = "#FF0"
+    this.color = "transparent"
     this.glowColor = "#FF0"
     this.glows = true
     this.setImg()

@@ -226,10 +226,10 @@ export class Player extends GameObject {
     this.velocityParticles.forEach((particle) => {
       ctx.fillStyle = particle.color
       ctx.fillRect(
-        particle.pos.x - particle.size / 2 - camera.offsetX,
-        particle.pos.y - camera.offsetY,
-        particle.size,
-        particle.size
+        (particle.pos.x - particle.size / 2 - camera.offsetX) * camera.zoom,
+        (particle.pos.y - camera.offsetY) * camera.zoom,
+        particle.size * camera.zoom,
+        particle.size * camera.zoom
       )
     })
   }

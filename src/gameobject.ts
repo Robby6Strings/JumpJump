@@ -45,21 +45,10 @@ export class GameObject {
   draw(ctx: CanvasRenderingContext2D, camera: Camera) {
     const { offsetX, offsetY } = camera
     if (this.glows) {
-      ctx.shadowBlur = this.glowSize
+      ctx.shadowBlur = this.glowSize * camera.zoom
       ctx.shadowColor = this.glowColor
     } else {
       ctx.shadowBlur = 0
-    }
-
-    if (this.img) {
-      ctx.drawImage(
-        this.img,
-        this.pos.x - offsetX - this.halfSize.width,
-        this.pos.y - offsetY - this.halfSize.height,
-        this.size.width,
-        this.size.height
-      )
-      return
     }
 
     ctx.fillStyle = this.color
@@ -67,24 +56,34 @@ export class GameObject {
 
     if (this.shape === Shape.Circle) {
       ctx.arc(
-        this.pos.x - offsetX,
-        this.pos.y - offsetY,
-        this.halfSize.width,
+        (this.pos.x - offsetX) * camera.zoom,
+        (this.pos.y - offsetY) * camera.zoom,
+        this.halfSize.width * camera.zoom,
         0,
         Math.PI * 2
       )
     } else {
       ctx.roundRect(
-        this.pos.x - this.halfSize.width - offsetX,
-        this.pos.y - this.halfSize.height - offsetY,
-        this.size.width,
-        this.size.height,
+        (this.pos.x - this.halfSize.width - offsetX) * camera.zoom,
+        (this.pos.y - this.halfSize.height - offsetY) * camera.zoom,
+        this.size.width * camera.zoom,
+        this.size.height * camera.zoom,
         3
       )
     }
 
     ctx.fill()
     ctx.closePath()
+
+    if (this.img) {
+      ctx.drawImage(
+        this.img,
+        (this.pos.x - offsetX - this.halfSize.width) * camera.zoom,
+        (this.pos.y - offsetY - this.halfSize.height) * camera.zoom,
+        this.size.width * camera.zoom,
+        this.size.height * camera.zoom
+      )
+    }
   }
 
   tick() {
@@ -166,6 +165,14 @@ export class GameObject {
             ;(this as any as Player).statusEffects.add(projectile.statusEffect)
           }
 
+          break
+        default:
+          break
+      }
+    } else if (this.type === GameObjectType.Boss) {
+      switch (object.type) {
+        case GameObjectType.Platform:
+          this.handlePlatformCollision(object as Platform)
           break
         default:
           break

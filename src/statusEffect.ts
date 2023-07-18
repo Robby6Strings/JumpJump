@@ -27,9 +27,20 @@ export class StatusEffect {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D, pos: Vec2, width: number) {
+  draw(
+    ctx: CanvasRenderingContext2D,
+    pos: Vec2,
+    width: number,
+    camera: Camera
+  ) {
     if (!this.img) return
-    ctx.drawImage(this.img, pos.x - width / 2, pos.y, width, width)
+    ctx.drawImage(
+      this.img,
+      (pos.x - width / 2) * camera.zoom,
+      pos.y * camera.zoom,
+      width * camera.zoom,
+      width * camera.zoom
+    )
   }
 }
 
@@ -52,7 +63,8 @@ export class StatusEffectManager {
           x: playerPos.x - camera.offsetX,
           y: playerPos.y - playerSize.height / 2 - camera.offsetY,
         },
-        playerSize.width
+        playerSize.width,
+        camera
       )
     })
   }

@@ -1,4 +1,4 @@
-const testMode: boolean = true
+const testMode: boolean = false
 
 // export const constants = {
 //   screenWidth: 640,
@@ -18,7 +18,7 @@ export const constants = {
   sectionHeight: 450,
   gravity: 1.25,
   friction: 0.5,
-  shopDistance: testMode ? 5 : 50,
+  shopDistance: testMode ? 5 : 1000,
   testMode,
   testCoins: 51,
 }
