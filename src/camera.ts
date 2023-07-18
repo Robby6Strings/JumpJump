@@ -4,12 +4,15 @@ import { Player } from "./player.js"
 export class Camera {
   maxDistance: number = constants.screenHeight / 2
   offsetY: number = 0
+  offsetX: number = 0
   targetY: number = 0
+  targetX: number = 0
 
   constructor(private player: Player) {}
 
   tick() {
     this.targetY = this.player.pos.y
+    this.targetX = this.player.pos.x
     if (this.targetY > constants.screenHeight / 2) {
       // player is at start
       this.targetY = constants.screenHeight / 2
@@ -17,13 +20,12 @@ export class Camera {
     this.lerpToTarget()
   }
   lerpToTarget() {
-    const target = this.targetY - constants.screenHeight / 2
-    const diff = target - this.offsetY
+    const targetY = this.targetY - constants.screenHeight / 2
+    const diff = targetY - this.offsetY
     this.offsetY += diff * 0.15
-  }
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "red"
-    const playerOffset = this.player.pos.y
-    ctx.fillRect(constants.screenWidth / 2 - 2, playerOffset - this.offsetY - 2, 4, 4)
+
+    const targetX = this.targetX - constants.screenWidth / 2
+    const diffX = targetX - this.offsetX
+    this.offsetX += diffX * 0.15
   }
 }

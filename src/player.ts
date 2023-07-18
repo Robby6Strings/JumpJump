@@ -6,6 +6,7 @@ import { GameObject } from "./gameobject.js"
 import { IItem, Item } from "./item.js"
 import { Vec2 } from "./v2.js"
 import { StatusEffectManager } from "./statusEffect.js"
+import { Camera } from "./camera.js"
 
 type VelocityParticle = {
   pos: Vec2
@@ -122,14 +123,14 @@ export class Player extends GameObject {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D, yOffset: number): void {
-    this.drawVelocityParticles(ctx, yOffset)
-    super.draw(ctx, yOffset)
+  draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
+    this.drawVelocityParticles(ctx, camera)
+    super.draw(ctx, camera)
     if (this.abilities.length > 0) {
       this.renderAbilityJuiceBar(ctx)
       this.renderAbilities(ctx)
     }
-    this.statusEffects.draw(ctx, this.pos, yOffset, this.size)
+    this.statusEffects.draw(ctx, this.pos, camera, this.size)
   }
 
   renderAbilityJuiceBar(ctx: CanvasRenderingContext2D): void {
@@ -189,14 +190,14 @@ export class Player extends GameObject {
     })
   }
 
-  drawVelocityParticles(ctx: CanvasRenderingContext2D, yOffset: number): void {
+  drawVelocityParticles(ctx: CanvasRenderingContext2D, camera: Camera): void {
     if (this.velocityParticles.length === 0) return
     ctx.shadowBlur = 0
     this.velocityParticles.forEach((particle) => {
       ctx.fillStyle = particle.color
       ctx.fillRect(
-        particle.pos.x - particle.size / 2,
-        particle.pos.y - yOffset,
+        particle.pos.x - particle.size / 2 - camera.offsetX,
+        particle.pos.y - camera.offsetY,
         particle.size,
         particle.size
       )

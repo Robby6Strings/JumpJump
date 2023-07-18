@@ -1,3 +1,4 @@
+import { Camera } from "./camera"
 import { StatusEffectType } from "./enums"
 import { images } from "./state"
 import { Vec2 } from "./v2"
@@ -38,7 +39,7 @@ export class StatusEffectManager {
   draw(
     ctx: CanvasRenderingContext2D,
     playerPos: Vec2,
-    cameraOffset: number,
+    camera: Camera,
     playerSize: {
       width: number
       height: number
@@ -48,8 +49,8 @@ export class StatusEffectManager {
       effect.draw(
         ctx,
         {
-          x: playerPos.x,
-          y: playerPos.y - playerSize.height / 2 - cameraOffset,
+          x: playerPos.x - camera.offsetX,
+          y: playerPos.y - playerSize.height / 2 - camera.offsetY,
         },
         playerSize.width
       )

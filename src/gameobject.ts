@@ -6,6 +6,7 @@ import { Platform, PlatformBehaviour } from "./platform.js"
 import type { Vec2 } from "./v2"
 import { Projectile } from "./projectile.js"
 import { type Player } from "./player.js"
+import { Camera } from "./camera.js"
 
 export class GameObject {
   type: GameObjectType = GameObjectType.Unset
@@ -39,10 +40,10 @@ export class GameObject {
   affectedByGravity: boolean = false
   isCollidable: boolean = true
   isColliding: boolean = false
-  canLeaveMap: boolean = false
   deleted: boolean = false
 
-  draw(ctx: CanvasRenderingContext2D, yOffset: number = 0) {
+  draw(ctx: CanvasRenderingContext2D, camera: Camera) {
+    const { offsetX, offsetY } = camera
     if (this.glows) {
       ctx.shadowBlur = this.glowSize
       ctx.shadowColor = this.glowColor
@@ -53,8 +54,8 @@ export class GameObject {
     if (this.img) {
       ctx.drawImage(
         this.img,
-        this.pos.x - this.halfSize.width,
-        this.pos.y - yOffset - this.halfSize.height,
+        this.pos.x - offsetX - this.halfSize.width,
+        this.pos.y - offsetY - this.halfSize.height,
         this.size.width,
         this.size.height
       )
@@ -66,16 +67,16 @@ export class GameObject {
 
     if (this.shape === Shape.Circle) {
       ctx.arc(
-        this.pos.x,
-        this.pos.y - yOffset,
+        this.pos.x - offsetX,
+        this.pos.y - offsetY,
         this.halfSize.width,
         0,
         Math.PI * 2
       )
     } else {
       ctx.roundRect(
-        this.pos.x - this.halfSize.width,
-        this.pos.y - this.halfSize.height - yOffset,
+        this.pos.x - this.halfSize.width - offsetX,
+        this.pos.y - this.halfSize.height - offsetY,
         this.size.width,
         this.size.height,
         3
@@ -129,16 +130,6 @@ export class GameObject {
     if (this.vel.y < -this.maxSpeedY) this.vel.y = -this.maxSpeedY
     this.pos.x += this.vel.x * GameObject.speedMultiplier
     this.pos.y += this.vel.y * GameObject.speedMultiplier
-    if (!this.canLeaveMap) {
-      if (this.pos.x - this.halfSize.width < 0) {
-        this.pos.x = this.halfSize.width
-        if (this.vel.x < 0) this.vel.x = -this.vel.x * 0.5
-      }
-      if (this.pos.x + this.halfSize.width > constants.screenWidth) {
-        this.pos.x = constants.screenWidth - this.halfSize.width
-        if (this.vel.x > 0) this.vel.x = -this.vel.x * 0.5
-      }
-    }
   }
 
   handleCollisions(objects: GameObject[]) {

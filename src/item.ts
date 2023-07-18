@@ -2,7 +2,7 @@ import { constants } from "./constants"
 import { GameObjectType, ItemType, Shape } from "./enums"
 import { GameObject } from "./gameobject"
 import { Vec2 } from "./v2"
-import { images, isShopOpen } from "./state"
+import { game, images, isShopOpen } from "./state"
 
 export interface IItem {
   itemType: ItemType
@@ -52,7 +52,7 @@ export class Item extends GameObject implements IItem {
       this.otherPortal.isInteracting = false
       return
     }
-    if (this.itemType === ItemType.Shop) {
+    if (this.itemType === ItemType.Shop && this === game?.currentShop) {
       if (!this.isColliding && isShopOpen.value) isShopOpen.value = false
     }
   }

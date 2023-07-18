@@ -117,9 +117,9 @@ function main() {
   bgPattern = bgCtx.createPattern(bgImage.value, "repeat")!
   bgCtx.fillStyle = bgPattern
   bgCtx.fillRect(
-    0,
+    -constants.screenWidth * 500,
     -constants.screenHeight * 999,
-    constants.screenWidth,
+    constants.screenWidth * 1000,
     constants.screenHeight * 1000
   )
   createNewGame()
@@ -129,7 +129,8 @@ function main() {
   }, 1000 / 60)
 }
 
-let lastDistance = 0
+let lastDistanceY = 0
+let lastDistanceX = 0
 let interval: number | undefined = undefined
 function shouldDraw(object: GameObject) {
   return (
@@ -149,36 +150,40 @@ function loop() {
   game.tick()
   for (const platform of game.platforms) {
     if (!shouldDraw(platform)) continue
-    platform.draw(ctx, game.camera.offsetY)
+    platform.draw(ctx, game.camera)
   }
   for (const item of game.items) {
     if (!shouldDraw(item)) continue
-    item.draw(ctx, game.camera.offsetY)
+    item.draw(ctx, game.camera)
   }
   for (const turret of game.turrets) {
     if (!shouldDraw(turret)) continue
-    turret.draw(ctx, game.camera.offsetY)
+    turret.draw(ctx, game.camera)
   }
   for (const projectile of game.projectiles) {
     if (!shouldDraw(projectile)) continue
-    projectile.draw(ctx, game.camera.offsetY)
+    projectile.draw(ctx, game.camera)
   }
-  game.player.draw(ctx, game.camera.offsetY)
+  game.player.draw(ctx, game.camera)
 
   if (game.directionIndicator && game.directionIndicatorIcon) {
-    const x = game.directionIndicator.x
-    const y = game.directionIndicator.y
+    const { x, y } = game.directionIndicator
     ctx.drawImage(game.directionIndicatorIcon, x, y, 50, 50)
   }
 
-  const distanceDif = -game.camera.offsetY - lastDistance
-  lastDistance = -game.camera.offsetY
-  const yTranslate = Math.round(distanceDif * bgImageSpeed.value)
-  bgCtx.translate(0, yTranslate)
+  const distanceDifY = -game.camera.offsetY - lastDistanceY
+  lastDistanceY = -game.camera.offsetY
+  const distanceDifX = -game.camera.offsetX - lastDistanceX
+  lastDistanceX = -game.camera.offsetX
+
+  const yTranslate = Math.round(distanceDifY * bgImageSpeed.value)
+  const xTranslate = Math.round(distanceDifX * bgImageSpeed.value)
+
+  bgCtx.translate(xTranslate, yTranslate)
   bgCtx.fillRect(
-    0,
+    -constants.screenWidth * 500,
     -constants.screenHeight * 999,
-    constants.screenWidth,
+    constants.screenWidth * 1000,
     constants.screenHeight * 1000
   )
 

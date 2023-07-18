@@ -24,6 +24,7 @@ export class Game {
   directionIndicator: Vec2 | null = null
   directionIndicatorIcon: HTMLImageElement | null = null
   speedMultiplier: number = 1
+  horizontalVariation: number = 0
 
   constructor() {
     this.player = new Player()
@@ -85,34 +86,64 @@ export class Game {
     this.section =
       Math.abs(Math.floor(this.player.pos.y / constants.sectionHeight)) + 1
 
+    this.renderShopIndicator()
+  }
+
+  renderShopIndicator() {
+    this.currentShop = this.items
+      .filter((i) => i.itemType === ItemType.Shop)
+      .sort((a, b) => {
+        const aDist = Math.sqrt(
+          Math.pow(a.pos.x - this.player.pos.x, 2) +
+            Math.pow(a.pos.y - this.player.pos.y, 2)
+        )
+        const bDist = Math.sqrt(
+          Math.pow(b.pos.x - this.player.pos.x, 2) +
+            Math.pow(b.pos.y - this.player.pos.y, 2)
+        )
+        return aDist - bDist
+      })[0]
+
     if (this.currentShop) {
-      // check if the shop is in view, based on the camera offset
-      const dist = Math.abs(
-        this.currentShop.pos.y -
-          this.camera.offsetY -
-          constants.screenHeight / 2
+      // check if the shop is outside of the player's view
+
+      const shopPos = this.currentShop.pos
+      const playerPos = this.player.pos
+
+      let x = 0
+      let y = 0
+
+      const dist = Math.sqrt(
+        Math.pow(shopPos.x - playerPos.x, 2) +
+          Math.pow(shopPos.y - playerPos.y, 2)
       )
+
       if (
         dist > constants.screenHeight / 2 &&
-        dist < constants.screenHeight * 3
+        dist < constants.screenHeight * 2
       ) {
-        //get the middle between 'this.currentShop.pos.x' and 'this.player.pos.x'
-        const x = this.currentShop.pos.x - this.currentShop.halfSize.width
-        const y =
-          this.camera.offsetY > this.currentShop.pos.y
-            ? 0
-            : constants.screenHeight
+        // calculate a coordinate 300px away from the player at an angle that points to the shop
+
+        const angle = Math.atan2(
+          shopPos.y - playerPos.y,
+          shopPos.x - playerPos.x
+        )
+        x = constants.screenWidth / 2 + Math.cos(angle) * 250
+        y = constants.screenHeight / 2 + Math.sin(angle) * 250
 
         this.directionIndicator = { x, y }
         this.directionIndicatorIcon = this.currentShop.img
       } else {
-        this.directionIndicator = null
-        this.directionIndicatorIcon = null
+        this.clearDirectionIndicator()
       }
     } else {
-      this.directionIndicator = null
-      this.directionIndicatorIcon = null
+      this.clearDirectionIndicator()
     }
+  }
+
+  clearDirectionIndicator() {
+    this.directionIndicator = null
+    this.directionIndicatorIcon = null
   }
 
   generateNextSection() {
@@ -128,7 +159,7 @@ export class Game {
         !didSpawnShop && this.maxSection % constants.shopDistance === 0
 
       const heightVariance = 100
-      const x = Math.random() * (i + 1) * areaWidth
+      const x = this.horizontalVariation + Math.random() * (i + 1) * areaWidth
       const y = spawnShop
         ? constants.sectionHeight - this.maxSection * constants.sectionHeight
         : constants.sectionHeight -
@@ -137,15 +168,13 @@ export class Game {
           heightVariance / 2
 
       if (spawnShop) {
-        if (this.currentShop) {
-          this.items.splice(this.items.indexOf(this.currentShop), 1)
-        }
         let shopX = Math.random() * constants.screenWidth
-        this.currentShop = new Shop({
-          x: shopX,
-          y: y - 48,
-        })
-        this.items.push(this.currentShop)
+        this.items.push(
+          new Shop({
+            x: shopX,
+            y: y - 48,
+          })
+        )
         didSpawnShop = true
         platforms.push(
           Platform.randomPlatform({ x: shopX, y }, { height: 30, width: 160 }, [
@@ -180,6 +209,8 @@ export class Game {
 
       platforms.push(Platform.randomPlatform({ x, y }))
     }
+
+    this.horizontalVariation += Math.random() * 300 - 150
 
     //portal pair
     if (this.maxSection % 4 === 0 && this.maxSection > 60) {
