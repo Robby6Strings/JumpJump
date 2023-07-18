@@ -205,48 +205,29 @@ export class Game {
             )
           }
         }
+      } else if (this.maxSection % 8 === 0) {
+        if (Math.random() > 0.8) {
+          const y =
+            constants.sectionHeight -
+            (this.maxSection + 1) * constants.sectionHeight
+          this.items.push(new Item({ x, y }, ItemType.AntiGravity))
+        }
+      } else if (this.maxSection % 3 === 0 && this.maxSection > 5) {
+        if (Math.random() > 0.6) {
+          this.turrets.push(
+            new Turret(
+              { x, y: y - 100 },
+              this.player,
+              this.addProjectile.bind(this)
+            )
+          )
+        }
       }
 
       platforms.push(Platform.randomPlatform({ x, y }))
     }
 
     this.horizontalVariation += Math.random() * 300 - 150
-
-    //portal pair
-    if (this.maxSection % 4 === 0 && this.maxSection > 60) {
-      if (Math.random() > 0.9) {
-        const y = -(this.maxSection + 1) * constants.sectionHeight
-        this.items.push(...Portal.createPair(y))
-      }
-    }
-    //antigrav
-    if (this.maxSection % 8 === 0) {
-      if (Math.random() > 0.8) {
-        const y =
-          constants.sectionHeight -
-          (this.maxSection + 1) * constants.sectionHeight
-        this.items.push(
-          new Item({ x: constants.screenWidth / 2, y }, ItemType.AntiGravity)
-        )
-      }
-    }
-
-    //turret
-    // 30, 0.8
-    if (this.maxSection % 3 === 0 && this.maxSection > 5) {
-      if (Math.random() > 0.3) {
-        const y =
-          constants.sectionHeight -
-          (this.maxSection + 1) * constants.sectionHeight
-        this.turrets.push(
-          new Turret(
-            { x: Math.random() > 0.5 ? 0 : constants.screenWidth, y },
-            this.player,
-            this.addProjectile.bind(this)
-          )
-        )
-      }
-    }
 
     this.platforms.push(...platforms)
   }
@@ -268,9 +249,6 @@ export class Game {
   }
   onShopAbilityClick(ability: Ability) {
     this.player.abilities.push(ability)
-    if (this.player.selectedAbilityIndex === -1) {
-      this.player.selectedAbilityIndex = 0
-    }
     shopInventory.value = shopInventory.value.filter((a) => a !== ability)
 
     this.player.coins.value.splice(0, ability.price)

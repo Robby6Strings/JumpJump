@@ -1,5 +1,5 @@
 import { Signal } from "cinnabun"
-import { Ability } from "./ability.js"
+import { Ability, AbilityType } from "./ability.js"
 import { constants } from "./constants.js"
 import { GameObjectType, ItemType, StatusEffectType } from "./enums.js"
 import { GameObject } from "./gameobject.js"
@@ -22,7 +22,6 @@ export class Player extends GameObject {
   abilityJuiceCost: number = 100
   abilityJuice: number = 0
   maxAbilityJuice: number = 300
-  selectedAbilityIndex: number = -1
 
   defaultColor: string = "#69c"
   chilledColor: string = "#8ac"
@@ -34,6 +33,9 @@ export class Player extends GameObject {
     right: false,
     up: false,
     down: false,
+    ability1: false,
+    ability2: false,
+    ability3: false,
   }
 
   get isChilled(): boolean {
@@ -56,6 +58,8 @@ export class Player extends GameObject {
     this.glows = true
     this.glowColor = "#000A"
     this.glowSize = 3
+    this.abilities.push(new Ability(AbilityType.DoubleJump))
+
     this.attachKeybinds()
     if (constants.testMode) {
       for (let i = 0; i < constants.testCoins; i++) {
@@ -167,14 +171,15 @@ export class Player extends GameObject {
     const padding = 10
     const x = constants.screenWidth - abilitySize - padding - 30
     const y = constants.screenHeight - abilitySize - padding
+
+    ctx.strokeStyle = "#0004"
+    ctx.fillStyle = "#0004"
+    ctx.lineWidth = 2
+
     this.abilities.forEach((ability, i) => {
-      const isSelected = i === this.selectedAbilityIndex
       ctx.beginPath()
-      ctx.fillStyle = isSelected ? "#0004" : "transparent"
       ctx.roundRect(x - i * abilitySize, y, abilitySize, abilitySize, 5)
       ctx.fill()
-      ctx.strokeStyle = isSelected ? "#fff" : "#0004"
-      ctx.lineWidth = 2
       ctx.stroke()
       ctx.closePath()
 
@@ -245,53 +250,77 @@ export class Player extends GameObject {
       this.vel.y -= this.jumpPower * (this.hasJumpBoost ? 2 : 1)
       this.isJumping = true
     }
+    if (this.inputs.down) {
+      this.vel.y += this.speed / 2
+    }
+
+    const ability1 = this.abilities[1]
+    if (ability1) {
+      if (this.inputs.ability1 && this.abilityJuice >= ability1.cost) {
+        ability1.use(this)
+        this.abilityJuice -= ability1.cost
+      } else {
+        ability1.unuse(this)
+      }
+    }
+
+    const ability2 = this.abilities[2]
+    if (ability2) {
+      if (this.inputs.ability2 && this.abilityJuice >= ability2.cost) {
+        ability2.use(this)
+        this.abilityJuice -= ability2.cost
+      } else {
+        ability2.unuse(this)
+      }
+    }
+
+    const ability3 = this.abilities[3]
+    if (ability3) {
+      if (this.inputs.ability3 && this.abilityJuice >= ability3.cost) {
+        ability3.use(this)
+        this.abilityJuice -= ability3.cost
+      } else {
+        ability3.unuse(this)
+      }
+    }
   }
 
   attachKeybinds(): void {
     window.addEventListener("keydown", (e) => {
       switch (e.key.toLowerCase()) {
-        case "arrowleft":
         case "a":
           this.inputs.left = true
           break
-        case "arrowright":
         case "d":
           this.inputs.right = true
           break
-        case "arrowup":
         case "w":
           this.inputs.up = true
           break
-        case "arrowdown":
         case "s":
           this.inputs.down = true
           break
-      }
-    })
-    window.addEventListener("wheel", (e) => {
-      if (this.abilities.length > 1) {
-        if (e.deltaY > 0) {
-          this.selectedAbilityIndex++
-          if (this.selectedAbilityIndex >= this.abilities.length) {
-            this.selectedAbilityIndex = 0
-          }
-        } else {
-          this.selectedAbilityIndex--
-          if (this.selectedAbilityIndex < 0) {
-            this.selectedAbilityIndex = this.abilities.length - 1
-          }
-        }
+        case "c":
+          this.inputs.ability1 = true
+          break
+        case "v":
+          this.inputs.ability2 = true
+          break
+        case "b":
+          this.inputs.ability3 = true
+          break
       }
     })
 
     window.addEventListener("keypress", (e) => {
       switch (e.key.toLowerCase()) {
         case " ":
-          if (this.abilities.length > 0) {
-            if (this.abilityJuice >= this.abilityJuiceCost) {
-              this.abilities[this.selectedAbilityIndex]?.use(this)
-              this.abilityJuice -= this.abilityJuiceCost
-            }
+          const ability = this.abilities.find(
+            (a) => a.type === AbilityType.DoubleJump
+          )!
+          if (this.abilityJuice >= ability.cost) {
+            ability.use(this)
+            this.abilityJuice -= ability.cost
           }
           break
       }
@@ -299,21 +328,26 @@ export class Player extends GameObject {
 
     window.addEventListener("keyup", (e) => {
       switch (e.key.toLowerCase()) {
-        case "arrowleft":
         case "a":
           this.inputs.left = false
           break
-        case "arrowright":
         case "d":
           this.inputs.right = false
           break
-        case "arrowup":
         case "w":
           this.inputs.up = false
           break
-        case "arrowdown":
         case "s":
           this.inputs.down = false
+          break
+        case "c":
+          this.inputs.ability1 = false
+          break
+        case "v":
+          this.inputs.ability2 = false
+          break
+        case "b":
+          this.inputs.ability3 = false
           break
       }
     })

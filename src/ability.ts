@@ -9,11 +9,13 @@ export enum AbilityType {
 
 export class Ability {
   img: HTMLImageElement
+  cost: number = 100
 
   constructor(public type: AbilityType, public price: number = 50) {
     switch (type) {
       case AbilityType.SlowMo:
         this.img = images.value.find((i) => i.name === "snail.png")!.image
+        this.cost = 1
         break
       case AbilityType.DoubleJump:
         this.img = images.value.find((i) => i.name === "boot.png")!.image
@@ -30,13 +32,20 @@ export class Ability {
   use(player: GameObject) {
     switch (this.type) {
       case AbilityType.SlowMo:
-        GameObject.speedMultiplier *= 0.5
-        setTimeout(() => {
-          GameObject.speedMultiplier *= 2
-        }, 6000)
+        GameObject.speedMultiplier = 0.5
         break
       case AbilityType.DoubleJump:
         player.vel.y -= player.jumpPower * 2
+        break
+      default:
+        break
+    }
+  }
+
+  unuse(_player: GameObject) {
+    switch (this.type) {
+      case AbilityType.SlowMo:
+        GameObject.speedMultiplier = 1
         break
       default:
         break

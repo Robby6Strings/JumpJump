@@ -109,10 +109,7 @@ function main() {
   if (!ctx) throw new Error("Context not loaded")
   if (!bgCtx) throw new Error("Background context not loaded")
 
-  shopInventory.value = [
-    new Ability(AbilityType.SlowMo),
-    new Ability(AbilityType.DoubleJump),
-  ]
+  shopInventory.value = [new Ability(AbilityType.SlowMo)]
 
   bgPattern = bgCtx.createPattern(bgImage.value, "repeat")!
   bgCtx.fillStyle = bgPattern
