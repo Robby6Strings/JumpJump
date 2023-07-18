@@ -187,7 +187,7 @@ export class Game {
       }
 
       const ceiling = new Platform({
-        size: { width: 1000, height: 50 },
+        size: { width: 10000, height: 50 },
         pos: { x: bossInitialPos.x, y: bossInitialPos.y - 400 },
         behaviours: [PlatformBehaviour.NoPassThrough],
       })
@@ -201,11 +201,13 @@ export class Game {
       this.bosses.push(boss)
       this.currentBoss = boss
 
-      platforms.push(
-        ceiling,
+      boss.platforms = [
         new Platform({
           size: { width: 140, height: 20 },
-          pos: { x: boss.pos.x, y: boss.pos.y + boss.halfSize.height + 10 },
+          pos: {
+            x: boss.pos.x,
+            y: boss.pos.y + boss.halfSize.height + 10,
+          },
           behaviours: [],
         }),
         new Platform({
@@ -215,10 +217,28 @@ export class Game {
         }),
         new Platform({
           size: { width: 140, height: 20 },
+          pos: {
+            x: boss.pos.x + 560,
+            y: boss.pos.y + boss.halfSize.height + 10,
+          },
+          behaviours: [],
+        }),
+        new Platform({
+          size: { width: 140, height: 20 },
           pos: { x: boss.pos.x - 280, y: boss.pos.y - 70 },
           behaviours: [],
-        })
-      )
+        }),
+        new Platform({
+          size: { width: 140, height: 20 },
+          pos: {
+            x: boss.pos.x - 560,
+            y: boss.pos.y + boss.halfSize.height + 10,
+          },
+          behaviours: [],
+        }),
+      ]
+
+      platforms.push(ceiling, ...boss.platforms)
     } else {
       // spawn platforms & coins, and a shop if needed
       for (let i = 0; i < platformCount; i++) {

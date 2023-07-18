@@ -6,6 +6,13 @@ import { images } from "./state"
 export class Boss extends GameObject {
   size = { width: 100, height: 100 }
   onKilledFunc: { (): void } | null = null
+  platforms: Platform[] = []
+  currentPlatform: number = 0
+  jumpCooldown: number = 0
+  jumpCooldownMax: number = 2500
+  jumpPower: number = 35
+  frictionMultiplier: number = 0.5
+
   constructor() {
     super()
     this.type = GameObjectType.Boss
@@ -18,6 +25,28 @@ export class Boss extends GameObject {
     this.affectedByGravity = true
     this.isCollidable = true
     this.isColliding = false
+  }
+
+  tick() {
+    super.tick()
+    this.jumpCooldown += 1000 / 60
+    if (this.jumpCooldown >= this.jumpCooldownMax) {
+      this.jumpCooldown = 0
+      this.jump()
+    }
+  }
+
+  jump() {
+    let nextPlatformIndex = this.currentPlatform + Math.floor(Math.random() * 2)
+    if (nextPlatformIndex >= this.platforms.length) nextPlatformIndex = 0
+    if (nextPlatformIndex < 0) nextPlatformIndex = 0
+    this.currentPlatform = nextPlatformIndex
+    this.vel.y = -this.jumpPower * 0.75
+    this.vel.x =
+      this.platforms[this.currentPlatform].pos.x < this.pos.x
+        ? -this.jumpPower * 50
+        : this.jumpPower * 50
+    this.isJumping = true
   }
 
   handlePlatformCollision(platform: Platform): void {
