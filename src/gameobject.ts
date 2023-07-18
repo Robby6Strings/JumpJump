@@ -201,9 +201,10 @@ export class GameObject {
     const angle = this.angleTo(boss)
     const distance = this.distanceTo(boss)
     const reboundDistance = this.halfSize.width + boss.halfSize.width - distance
-    this.pos.x += Math.cos(angle) * reboundDistance
+    const xShift = Math.cos(angle) * reboundDistance
+    this.pos.x += xShift
     this.pos.y += Math.sin(angle) * reboundDistance
-    this.vel.x = Math.cos(angle) * 500
+    this.vel.x = xShift * 100
     this.vel.y = Math.sin(angle) * 10
     this.isCollidable = false
     setTimeout(() => {
