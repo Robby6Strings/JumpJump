@@ -73,10 +73,19 @@ export class Game {
       boss.tick()
     }
     this.bosses = this.bosses.filter((n) => !n.deleted)
-    if (this.currentBoss && this.camera.zoom > 0.5) {
-      this.camera.zoom -= 0.01
-    } else if (!this.currentBoss && this.camera.zoom < 1) {
-      this.camera.zoom += 0.01
+
+    if (this.currentBoss) {
+      const dist = this.currentBoss.distanceTo(this.player)
+      const shouldZoom =
+        dist < constants.screenHeight * this.camera.zoomMultiplier
+
+      if (this.camera.zoom > 0.5 && shouldZoom) {
+        this.camera.zoom -= 0.025
+      } else if (this.camera.zoom < 1 && !shouldZoom) {
+        this.camera.zoom += 0.025
+      }
+    } else if (this.camera.zoom < 1) {
+      this.camera.zoom += 0.025
     }
 
     this.player.tick()
@@ -163,14 +172,17 @@ export class Game {
     let didSpawnShop = false
 
     if (
-      this.maxSection % 50 === 0 ||
+      this.maxSection % 5 === 0 ||
       (constants.testMode && this.maxSection === 1)
     ) {
       const y =
         constants.sectionHeight -
         this.maxSection * constants.sectionHeight +
         100
-      const bossInitialPos = { x: constants.screenWidth / 2, y }
+      const bossInitialPos = {
+        x: constants.screenWidth / 2 + this.horizontalVariation,
+        y,
+      }
 
       const boss = new Boss()
       boss.pos = bossInitialPos
