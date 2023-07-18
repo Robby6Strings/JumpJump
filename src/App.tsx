@@ -129,14 +129,6 @@ function main() {
 let lastDistanceY = 0
 let lastDistanceX = 0
 let interval: number | undefined = undefined
-function shouldDraw(object: GameObject) {
-  return (
-    object.pos.y + object.size.height >
-      game!.camera.offsetY - constants.screenHeight &&
-    object.pos.y + object.size.height <
-      game!.camera.offsetY + constants.screenHeight * 2
-  )
-}
 
 function loop() {
   let ctx = HtmlElements.value.ctx
@@ -146,23 +138,18 @@ function loop() {
 
   game.tick()
   for (const platform of game.platforms) {
-    if (!shouldDraw(platform)) continue
     platform.draw(ctx, game.camera)
   }
   for (const item of game.items) {
-    if (!shouldDraw(item)) continue
     item.draw(ctx, game.camera)
   }
   for (const turret of game.turrets) {
-    if (!shouldDraw(turret)) continue
     turret.draw(ctx, game.camera)
   }
   for (const projectile of game.projectiles) {
-    if (!shouldDraw(projectile)) continue
     projectile.draw(ctx, game.camera)
   }
   for (const boss of game.bosses) {
-    if (!shouldDraw(boss)) continue
     boss.draw(ctx, game.camera)
   }
 

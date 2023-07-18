@@ -42,7 +42,18 @@ export class GameObject {
   isColliding: boolean = false
   deleted: boolean = false
 
+  shouldDraw(camera: Camera) {
+    return (
+      this.pos.y + this.size.height >
+        camera.offsetY - constants.screenHeight * camera.zoomMultiplier &&
+      this.pos.y + this.size.height <
+        camera.offsetY + constants.screenHeight * camera.zoomMultiplier * 2
+    )
+  }
+
   draw(ctx: CanvasRenderingContext2D, camera: Camera) {
+    if (!this.shouldDraw(camera)) return
+
     const { offsetX, offsetY } = camera
     if (this.glows) {
       ctx.shadowBlur = this.glowSize * camera.zoom
