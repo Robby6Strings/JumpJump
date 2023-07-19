@@ -13,6 +13,7 @@ export class GameObject {
   type: GameObjectType = GameObjectType.Unset
   pos: Vec2 = { x: 0, y: 0 }
   vel: Vec2 = { x: 0, y: 0 }
+  rotation: number = 0
   speed: number = 3
   maxSpeedX: number = 12
   maxSpeedY: number = 100
@@ -55,6 +56,8 @@ export class GameObject {
   draw(ctx: CanvasRenderingContext2D, camera: Camera) {
     if (!this.shouldDraw(camera)) return
 
+    ctx.save()
+
     const { offsetX, offsetY } = camera
     if (this.glows) {
       ctx.shadowBlur = this.glowSize * camera.zoom
@@ -65,19 +68,41 @@ export class GameObject {
 
     ctx.fillStyle = this.color
     ctx.beginPath()
+    if (this.rotation !== 0) {
+      ctx.translate(
+        (this.pos.x - offsetX) * camera.zoom,
+        (this.pos.y - offsetY) * camera.zoom
+      )
+
+      ctx.rotate(this.rotation)
+    }
+
+    const centerX =
+      this.rotation === 0 ? (this.pos.x - offsetX) * camera.zoom : 0
+    const centerY =
+      this.rotation === 0 ? (this.pos.y - offsetY) * camera.zoom : 0
+
+    const rectCenterX =
+      this.rotation === 0
+        ? (this.pos.x - this.halfSize.width - offsetX) * camera.zoom
+        : 0
+    const rectCenterY =
+      this.rotation === 0
+        ? (this.pos.y - this.halfSize.height - offsetY) * camera.zoom
+        : 0
 
     if (this.shape === Shape.Circle) {
       ctx.arc(
-        (this.pos.x - offsetX) * camera.zoom,
-        (this.pos.y - offsetY) * camera.zoom,
+        centerX,
+        centerY,
         this.halfSize.width * camera.zoom,
         0,
         Math.PI * 2
       )
     } else {
       ctx.roundRect(
-        (this.pos.x - this.halfSize.width - offsetX) * camera.zoom,
-        (this.pos.y - this.halfSize.height - offsetY) * camera.zoom,
+        rectCenterX,
+        rectCenterY,
         this.size.width * camera.zoom,
         this.size.height * camera.zoom,
         3
@@ -90,12 +115,14 @@ export class GameObject {
     if (this.img) {
       ctx.drawImage(
         this.img,
-        (this.pos.x - offsetX - this.halfSize.width) * camera.zoom,
-        (this.pos.y - offsetY - this.halfSize.height) * camera.zoom,
+        rectCenterX,
+        rectCenterY,
         this.size.width * camera.zoom,
         this.size.height * camera.zoom
       )
     }
+
+    ctx.restore()
   }
 
   tick() {

@@ -67,23 +67,37 @@ export class Turret extends GameObject {
 }
 
 export class LaserTurret extends Turret {
+  shootRange: number = Infinity
   shootCooldown: number = 5000
   targetBoss: GameObject | null = null
   rotation: number = 0
   color: string = "#777"
   enabled: boolean = false
   tick() {
-    if (!this.enabled) return
-    super.tick()
-    if (!this.targetBoss) return
+    if (this.enabled && (!this.targetBoss || this.targetBoss.deleted)) {
+      this.targetBoss = this.getEnemyInRange()
+    } else if (!this.enabled && this.targetBoss) {
+      this.targetBoss = null
+    }
+    this.rotation = this.targetBoss
+      ? this.angleTo(this.targetBoss)
+      : Math.PI + Math.PI / 2
 
-    this.rotation = this.angleTo(this.targetBoss)
+    if (this.enabled && this.targetBoss) {
+      this.lastShot += 1000 / 60
+      if (this.lastShot >= this.shootCooldown) {
+        this.shoot()
+        this.lastShot = 0
+      }
+    } else {
+      this.lastShot = 0
+    }
   }
-  shoot(enemy: GameObject): void {
-    const angle = this.angleTo(enemy)
+  shoot(): void {
+    //const angle = this.angleTo(enemy)
     const vel = {
-      x: Math.cos(angle) * 30,
-      y: Math.sin(angle) * 30,
+      x: Math.cos(this.rotation) * 30,
+      y: Math.sin(this.rotation) * 30,
     }
 
     const laser = new GameObject()
@@ -96,11 +110,13 @@ export class LaserTurret extends Turret {
       y: this.pos.y,
     }
     laser.vel = vel
-    laser.isCollidable = false
+    laser.isCollidable = true
     laser.isStatic = true
+    laser.rotation = this.rotation
+
     laser.tick = () => {
       laser.size.width += 10
-      laser.size.height += 10
+      //laser.size.height += 10
       laser.pos.x += laser.vel.x
       laser.pos.y += laser.vel.y
     }
@@ -112,11 +128,11 @@ export class LaserTurret extends Turret {
   onShoot(): void {}
 
   draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
-    this.color = this.enabled ? "#777a" : "#777"
+    this.color = this.enabled ? "#777" : "#777a"
     super.draw(ctx, camera)
 
-    if (!this.targetBoss) return
-    if (!this.enabled) return
+    //if (!this.targetBoss) return
+    //if (!this.enabled) return
 
     const { offsetX, offsetY } = camera
     // draw laser cannon on top of turret

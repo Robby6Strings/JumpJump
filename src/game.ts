@@ -71,6 +71,11 @@ export class Game {
     }
     this.projectiles = this.projectiles.filter((p) => !p.deleted)
 
+    for (const laser of this.lasers) {
+      laser.tick()
+    }
+    this.lasers = this.lasers.filter((l) => !l.deleted)
+
     for (const boss of this.bosses) {
       boss.tick()
     }
@@ -251,16 +256,13 @@ export class Game {
       laserTurret.onShoot = () => {
         chargers.forEach((c) => (c.chargeAmount = 0))
         chargedChargers = 0
+        laserTurret.enabled = false
       }
 
       const onChargerCharged = () => {
         chargedChargers++
         console.log(chargedChargers, chargers.length)
-        if (
-          chargedChargers === chargers.length &&
-          !boss.deleted &&
-          laserTurret.targetBoss
-        ) {
+        if (chargedChargers === chargers.length && !boss.deleted) {
           laserTurret.enabled = true
           console.log("enabled")
         }

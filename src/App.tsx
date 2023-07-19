@@ -152,6 +152,9 @@ function loop() {
   for (const boss of game.bosses) {
     boss.draw(ctx, game.camera)
   }
+  for (const laser of game.lasers) {
+    laser.draw(ctx, game.camera)
+  }
 
   game.player.draw(ctx, game.camera)
 
