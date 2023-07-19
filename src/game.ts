@@ -8,8 +8,9 @@ import { Ability } from "./ability.js"
 import { shopInventory } from "./state.js"
 import { Vec2 } from "./v2.js"
 import { Projectile } from "./projectile.js"
-import { Turret } from "./turret.js"
+import { LaserTurret, Turret } from "./turret.js"
 import { Boss } from "./boss.js"
+import { GameObject } from "./gameobject.js"
 
 export class Game {
   camera: Camera
@@ -18,6 +19,7 @@ export class Game {
   platforms: Platform[] = []
   turrets: Turret[] = []
   projectiles: Projectile[] = []
+  lasers: GameObject[] = []
   items: Item[] = []
   bosses: Boss[] = []
   currentBoss: Boss | null = null
@@ -238,16 +240,48 @@ export class Game {
         }),
       ]
 
+      let chargedChargers = 0
+      let chargers: Charger[] = []
+
+      const laserTurret = new LaserTurret(
+        { x: boss.pos.x, y: boss.pos.y - 280 },
+        this.bosses,
+        this.addLaser.bind(this)
+      )
+      laserTurret.onShoot = () => {
+        chargers.forEach((c) => (c.chargeAmount = 0))
+        chargedChargers = 0
+      }
+
+      const onChargerCharged = () => {
+        chargedChargers++
+        console.log(chargedChargers, chargers.length)
+        if (
+          chargedChargers === chargers.length &&
+          !boss.deleted &&
+          laserTurret.targetBoss
+        ) {
+          laserTurret.enabled = true
+          console.log("enabled")
+        }
+      }
+
       for (let i = 0; i < boss.platforms.length; i++) {
         if (i % 2 === 0) continue
         const platform = boss.platforms[i]
-        this.items.push(
-          new Charger({
-            x: platform.pos.x,
-            y: platform.pos.y - platform.halfSize.height - 20,
-          })
+        chargers.push(
+          new Charger(
+            {
+              x: platform.pos.x,
+              y: platform.pos.y - platform.halfSize.height - 20,
+            },
+            onChargerCharged
+          )
         )
       }
+      this.items.push(...chargers)
+
+      this.turrets.push(laserTurret)
 
       platforms.push(ceiling, ...boss.platforms)
     } else {
@@ -317,7 +351,7 @@ export class Game {
             this.turrets.push(
               new Turret(
                 { x, y: y - 100 },
-                this.player,
+                [this.player],
                 this.addProjectile.bind(this)
               )
             )
@@ -333,8 +367,12 @@ export class Game {
     this.platforms.push(...platforms)
   }
 
-  addProjectile(proj: Projectile) {
-    this.projectiles.push(proj)
+  addProjectile(proj: GameObject) {
+    this.projectiles.push(proj as Projectile)
+  }
+
+  addLaser(laser: GameObject) {
+    this.lasers.push(laser)
   }
 
   handleCollisions() {

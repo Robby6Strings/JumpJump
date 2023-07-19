@@ -162,7 +162,7 @@ export class Shop extends Item {
 export class Charger extends Item {
   chargeAmount: number = 0
   chargeMax: number = 100
-  constructor(pos: Vec2) {
+  constructor(pos: Vec2, private onCharged: { (): void }) {
     super(pos, ItemType.Charger)
     this.size = { width: 64, height: 64 }
     this.glows = false
@@ -174,8 +174,12 @@ export class Charger extends Item {
   }
 
   charge() {
+    if (this.chargeAmount === this.chargeMax) return
     this.chargeAmount += 0.33
-    if (this.chargeAmount > this.chargeMax) this.chargeAmount = this.chargeMax
+    if (this.chargeAmount > this.chargeMax) {
+      this.chargeAmount = this.chargeMax
+      this.onCharged()
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D, camera: Camera): void {

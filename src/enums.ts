@@ -18,6 +18,7 @@ export enum GameObjectType {
   Turret,
   Projectile,
   Boss,
+  Laser,
 }
 
 export enum ItemType {
