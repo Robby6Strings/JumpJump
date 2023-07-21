@@ -27,6 +27,10 @@ export class Boss extends GameObject {
   }
 
   tick() {
+    if (this.distanceTo(this.player) > 5000) {
+      this.deleted = true
+      return
+    }
     super.tick()
     this.jumpCooldown += 1000 / 60
     if (this.jumpCooldown >= this.jumpCooldownMax && !this.isJumping) {
