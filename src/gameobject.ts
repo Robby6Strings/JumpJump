@@ -53,6 +53,8 @@ export class GameObject {
     )
   }
 
+  onDestroyed(): void {}
+
   draw(ctx: CanvasRenderingContext2D, camera: Camera) {
     if (!this.shouldDraw(camera)) return
 
@@ -192,7 +194,6 @@ export class GameObject {
       switch (object.type) {
         case GameObjectType.Boss:
           this.handleBossCollision(object as Boss)
-
           break
         case GameObjectType.Platform:
           this.handlePlatformCollision(object as Platform)
@@ -216,6 +217,11 @@ export class GameObject {
       switch (object.type) {
         case GameObjectType.Platform:
           this.handlePlatformCollision(object as Platform)
+          break
+        case GameObjectType.Laser:
+          const laser = object as Projectile
+          laser.deleted = true
+          this.onDestroyed()
           break
         default:
           break

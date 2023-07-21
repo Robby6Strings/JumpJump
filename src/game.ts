@@ -22,7 +22,6 @@ export class Game {
   lasers: GameObject[] = []
   items: Item[] = []
   bosses: Boss[] = []
-  currentBoss: Boss | null = null
   maxSection: number
   isGameOver: boolean = false
   currentShop: Item | null = null
@@ -79,23 +78,38 @@ export class Game {
     for (const boss of this.bosses) {
       boss.tick()
     }
-    if (this.currentBoss?.deleted) this.currentBoss = null
+
+    // if (this.currentBoss?.deleted) this.currentBoss = null
+    // if (!this.currentBoss && this.bosses.length > 0) {
+    //   // get closest boss to the player
+    //   this.currentBoss = this.bosses.sort((a, b) => {
+    //     const aDist = Math.sqrt(
+    //       Math.pow(a.pos.x - this.player.pos.x, 2) +
+    //         Math.pow(a.pos.y - this.player.pos.y, 2)
+    //     )
+    //     const bDist = Math.sqrt(
+    //       Math.pow(b.pos.x - this.player.pos.x, 2) +
+    //         Math.pow(b.pos.y - this.player.pos.y, 2)
+    //     )
+    //     return aDist - bDist
+    //   })[0]
+    // }
 
     this.bosses = this.bosses.filter((n) => !n.deleted)
 
-    if (this.currentBoss) {
-      const dist = this.currentBoss.distanceTo(this.player)
-      const shouldZoom =
-        dist < constants.screenHeight * this.camera.zoomMultiplier
+    // if (this.currentBoss) {
+    //   const dist = this.currentBoss.distanceTo(this.player)
+    //   const shouldZoom =
+    //     dist < constants.screenHeight * this.camera.zoomMultiplier
 
-      if (this.camera.zoom > 0.5 && shouldZoom) {
-        this.camera.zoom -= 0.025
-      } else if (this.camera.zoom < 1 && !shouldZoom) {
-        this.camera.zoom += 0.025
-      }
-    } else if (this.camera.zoom < 1) {
-      this.camera.zoom += 0.025
-    }
+    //   if (this.camera.zoom > 0.5 && shouldZoom) {
+    //     this.camera.zoom -= 0.025
+    //   } else if (this.camera.zoom < 1 && !shouldZoom) {
+    //     this.camera.zoom += 0.025
+    //   }
+    // } else if (this.camera.zoom < 1) {
+    //   this.camera.zoom += 0.025
+    // }
 
     this.player.tick()
     this.camera.tick()
@@ -180,188 +194,93 @@ export class Game {
 
     let didSpawnShop = false
 
-    if (
-      this.maxSection % 5 === 0 ||
-      (constants.testMode && this.maxSection === 1)
-    ) {
-      const y =
-        constants.sectionHeight -
-        this.maxSection * constants.sectionHeight +
-        100
-      const bossInitialPos = {
-        x: constants.screenWidth / 2 + this.horizontalVariation,
-        y,
-      }
+    for (let i = 0; i < platformCount; i++) {
+      const spawnShop =
+        !didSpawnShop && this.maxSection % constants.shopDistance === 0
 
-      const ceiling = new Platform({
-        size: { width: 10000, height: 50 },
-        pos: { x: bossInitialPos.x, y: bossInitialPos.y - 400 },
-        behaviours: [PlatformBehaviour.NoPassThrough],
-      })
+      const heightVariance = 100
+      const x = this.horizontalVariation + Math.random() * (i + 1) * areaWidth
+      const y = spawnShop
+        ? constants.sectionHeight - this.maxSection * constants.sectionHeight
+        : constants.sectionHeight -
+          this.maxSection * constants.sectionHeight +
+          Math.random() * heightVariance -
+          heightVariance / 2
 
-      const boss = new Boss()
-      boss.pos = bossInitialPos
-      boss.onKilled(() => {
-        ceiling.deleted = true
-      })
-
-      this.bosses.push(boss)
-      this.currentBoss = boss
-
-      boss.platforms = [
-        new Platform({
-          size: { width: 140, height: 20 },
-          pos: {
-            x: boss.pos.x,
-            y: boss.pos.y + boss.halfSize.height + 10,
-          },
-          behaviours: [],
-        }),
-        new Platform({
-          size: { width: 140, height: 20 },
-          pos: { x: boss.pos.x + 300, y: boss.pos.y - 70 },
-          behaviours: [],
-        }),
-        new Platform({
-          size: { width: 140, height: 20 },
-          pos: {
-            x: boss.pos.x + 580,
-            y: boss.pos.y + boss.halfSize.height + 10,
-          },
-          behaviours: [],
-        }),
-        new Platform({
-          size: { width: 140, height: 20 },
-          pos: { x: boss.pos.x - 300, y: boss.pos.y - 70 },
-          behaviours: [],
-        }),
-        new Platform({
-          size: { width: 140, height: 20 },
-          pos: {
-            x: boss.pos.x - 580,
-            y: boss.pos.y + boss.halfSize.height + 10,
-          },
-          behaviours: [],
-        }),
-      ]
-
-      let chargedChargers = 0
-      let chargers: Charger[] = []
-
-      const laserTurret = new LaserTurret(
-        { x: boss.pos.x, y: boss.pos.y - 280 },
-        this.bosses,
-        this.addLaser.bind(this)
-      )
-      laserTurret.onShoot = () => {
-        chargers.forEach((c) => (c.chargeAmount = 0))
-        chargedChargers = 0
-        laserTurret.enabled = false
-      }
-
-      const onChargerCharged = () => {
-        chargedChargers++
-        console.log(chargedChargers, chargers.length)
-        if (chargedChargers === chargers.length && !boss.deleted) {
-          laserTurret.enabled = true
-          console.log("enabled")
-        }
-      }
-
-      for (let i = 0; i < boss.platforms.length; i++) {
-        if (i % 2 === 0) continue
-        const platform = boss.platforms[i]
-        chargers.push(
-          new Charger(
-            {
-              x: platform.pos.x,
-              y: platform.pos.y - platform.halfSize.height - 20,
-            },
-            onChargerCharged
-          )
+      if (spawnShop) {
+        let shopX = Math.random() * constants.screenWidth
+        this.items.push(
+          new Shop({
+            x: shopX,
+            y: y - 48,
+          })
         )
+        didSpawnShop = true
+        platforms.push(
+          Platform.randomPlatform({ x: shopX, y }, { height: 30, width: 160 }, [
+            PlatformBehaviour.JumpBoost,
+          ])
+        )
+        break
       }
-      this.items.push(...chargers)
 
-      this.turrets.push(laserTurret)
-
-      platforms.push(ceiling, ...boss.platforms)
-    } else {
-      // spawn platforms & coins, and a shop if needed
-      for (let i = 0; i < platformCount; i++) {
-        const spawnShop =
-          !didSpawnShop && this.maxSection % constants.shopDistance === 0
-
-        const heightVariance = 100
-        const x = this.horizontalVariation + Math.random() * (i + 1) * areaWidth
-        const y = spawnShop
-          ? constants.sectionHeight - this.maxSection * constants.sectionHeight
-          : constants.sectionHeight -
-            this.maxSection * constants.sectionHeight +
-            Math.random() * heightVariance -
-            heightVariance / 2
-
-        if (spawnShop) {
-          let shopX = Math.random() * constants.screenWidth
-          this.items.push(
-            new Shop({
-              x: shopX,
-              y: y - 48,
-            })
-          )
-          didSpawnShop = true
-          platforms.push(
-            Platform.randomPlatform(
-              { x: shopX, y },
-              { height: 30, width: 160 },
-              [PlatformBehaviour.JumpBoost]
-            )
-          )
-          break
-        }
-
-        // chance to spawn a coin above the platform
+      // chance to spawn a coin above the platform
+      if (Math.random() > 0.66) {
+        this.items.push(
+          new Item({ x, y: y - constants.sectionHeight / 2 }, ItemType.Coin)
+        )
         if (Math.random() > 0.66) {
           this.items.push(
-            new Item({ x, y: y - constants.sectionHeight / 2 }, ItemType.Coin)
+            new Item(
+              { x, y: y - constants.sectionHeight / 2 - 64 },
+              ItemType.Coin
+            )
           )
           if (Math.random() > 0.66) {
             this.items.push(
               new Item(
-                { x, y: y - constants.sectionHeight / 2 - 64 },
+                { x, y: y - constants.sectionHeight / 2 - 128 },
                 ItemType.Coin
-              )
-            )
-            if (Math.random() > 0.66) {
-              this.items.push(
-                new Item(
-                  { x, y: y - constants.sectionHeight / 2 - 128 },
-                  ItemType.Coin
-                )
-              )
-            }
-          }
-        } else if (this.maxSection % 8 === 0) {
-          if (Math.random() > 0.8) {
-            const y =
-              constants.sectionHeight -
-              (this.maxSection + 1) * constants.sectionHeight
-            this.items.push(new Item({ x, y }, ItemType.AntiGravity))
-          }
-        } else if (this.maxSection % 3 === 0 && this.maxSection > 5) {
-          if (Math.random() > 0.8) {
-            this.turrets.push(
-              new Turret(
-                { x, y: y - 100 },
-                [this.player],
-                this.addProjectile.bind(this)
               )
             )
           }
         }
-
-        platforms.push(Platform.randomPlatform({ x, y }))
+      } else if (this.maxSection % 8 === 0) {
+        if (Math.random() > 0.8) {
+          const y =
+            constants.sectionHeight -
+            (this.maxSection + 1) * constants.sectionHeight
+          this.items.push(new Item({ x, y }, ItemType.AntiGravity))
+        }
+      } else if (this.maxSection % 3 === 0 && this.maxSection > 5) {
+        if (Math.random() > 0.8) {
+          this.turrets.push(
+            new Turret(
+              { x, y: y - 100 },
+              [this.player],
+              this.addProjectile.bind(this)
+            )
+          )
+        }
       }
+
+      if (
+        this.maxSection > 50 &&
+        this.maxSection % 3 === 0 &&
+        Math.random() > 0.6
+      ) {
+        this.bosses.push(
+          new Boss(
+            {
+              x,
+              y: y - 100,
+            },
+            this.player
+          )
+        )
+      }
+
+      platforms.push(Platform.randomPlatform({ x, y }))
     }
 
     this.horizontalVariation += Math.random() * 300 - 150
@@ -385,7 +304,7 @@ export class Game {
       ...this.bosses,
     ])
     this.bosses.forEach((b) => {
-      b.handleCollisions([...this.platforms])
+      b.handleCollisions([...this.platforms, ...this.lasers])
     })
   }
 

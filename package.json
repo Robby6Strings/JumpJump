@@ -9,12 +9,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@types/node": "^20.4.2",
     "typescript": "^5.0.2",
     "vite": "^4.4.0"
   },
   "dependencies": {
-    "cinnabun": "^0.1.43",
+    "cinnabun": "^0.1.45",
     "cinnabun-transitions": "^1.0.5"
   }
 }

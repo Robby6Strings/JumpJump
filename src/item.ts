@@ -175,7 +175,7 @@ export class Charger extends Item {
 
   charge() {
     if (this.chargeAmount === this.chargeMax) return
-    this.chargeAmount += 0.33
+    this.chargeAmount += 0.66
     if (this.chargeAmount > this.chargeMax) {
       this.chargeAmount = this.chargeMax
       this.onCharged()

@@ -38,7 +38,7 @@ export class Turret extends GameObject {
   getEnemyInRange(): GameObject | null {
     for (const enemy of this.enemies) {
       const distToEnemy = this.distanceTo(enemy)
-      if (distToEnemy > this.shootRange) {
+      if (enemy.deleted || distToEnemy > this.shootRange) {
         continue
       }
       return enemy
@@ -96,8 +96,8 @@ export class LaserTurret extends Turret {
   shoot(): void {
     //const angle = this.angleTo(enemy)
     const vel = {
-      x: Math.cos(this.rotation) * 30,
-      y: Math.sin(this.rotation) * 30,
+      x: Math.cos(this.rotation) * 42,
+      y: Math.sin(this.rotation) * 42,
     }
 
     const laser = new GameObject()
